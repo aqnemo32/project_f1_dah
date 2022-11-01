@@ -63,7 +63,7 @@ def main():
     bins_3 = []
     counts_3 = []
 
-    
+    # setting up the peak and background parts of the histogram
     for i,j in zip(bins, count):
         if i > 9.25 and i <9.7:
             bins_1.append(i)
@@ -82,6 +82,7 @@ def main():
             counts_3.append(j)
     
     print(f'{len(bins_1)}\n{len(counts_1)}')
+    # fitting the exponential decay of the background count
         
     param_back, cov_back = curve_fit(decay, bins_back, counts_back)
 
