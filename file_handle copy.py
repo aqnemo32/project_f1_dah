@@ -10,12 +10,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime
 from scipy.optimize import curve_fit
+from scipy.stats import crystalball
 
 def gauss(x, a, sig, mu):
     return a*np.exp(-np.square(x-mu)/(2*np.square(sig)))
 
 def decay(x, a, b):
     return a*np.exp(x*b)
+
+def double_gauss(x, a_1, a_2, mu_1, mu_2, sig_1, sig_2):
+    return a_1*np.exp(-np.square(x-mu_1)/(2*np.square(sig_1)))+a_2*np.exp(-np.square(x-mu_2)/(2*np.square(sig_2)))
+
+def crystal(x, alpha, n, mu, sig):
+    if alpha <= (x-mu)/sig:
+        return 0
+    else:
+        return 0
 
 def main():
     # a = datetime.datetime.now()
@@ -52,7 +62,7 @@ def main():
     # print(b)
     count , bins, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
 
-    
+
     #histogram of the peaks from raw data
     bins_1 = []
     counts_1 = []
@@ -81,7 +91,7 @@ def main():
             bins_3.append(i)
             counts_3.append(j)
     
-    print(f'{len(bins_1)}\n{len(counts_1)}')
+    # print(f'{len(bins_1)}\n{len(counts_1)}')
     # fitting the exponential decay of the background count
         
     param_back, cov_back = curve_fit(decay, bins_back, counts_back)
@@ -116,6 +126,19 @@ def main():
     plt.plot(bins_1, count_1_fit)
     plt.plot(bins_2, count_2_fit)
     plt.plot(bins_3, count_3_fit)
+    plt.show()
+    plt.clf()
+    
+    #Residual
+    
+    res_1 = count_1_fit - counts_1
+    res_2 = count_2_fit - counts_2
+    res_3 = count_3_fit - counts_3
+    
+    plt.scatter(bins_1,res_1, marker = 'x', lw = 0.8, color = 'k')
+    plt.title('Residual plot for peak 1')
+    plt.xlabel('Mass')
+    plt.ylabel('Residual')
     plt.show()
     plt.clf()
     
