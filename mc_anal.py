@@ -36,6 +36,7 @@ def main():
 
     # setting up the peak and background parts of the histogram
     for i,j in zip(bins, count):
+        # why does changing the limits of what can be qualified as the first peak, change the what gets appended to tails
         if i > 9.05 and i <9.7:
             bins_1.append(i)
             count_1.append(j)
@@ -70,8 +71,21 @@ def main():
     # count_3_clean = np.array(count_3) - decay(np.array(bins_3), param_back[0], param_back[1])
     
     param_1, cov_1 = curve_fit(gauss, bins_1, count_1, p0 = [10, 0.3,9.5])
+    print()
     # tail = double_gauss(bins_1, 10, 0.2, 9.45, 2, 0.4, 9.45, param_1[0], param_1[1])
     # print(tail)
+    tail = []
+    count_tail = []
+    center = []
+    count_center = []
+    for i,j in zip(bins_1, count_1):
+        if i < param_1[2]-2*param_1[1] or i > param_1[2]+2*param_1[1]:
+            tail.append(i)
+            count_tail.append(j)
+        elif i > param_1[2]-2*param_1[1] and i < param_1[2]+2*param_1[1]:
+            center.append(i)
+            count_center.append(j)
+    print(center)
     param_1_d, cov_1_d = curve_fit(
         lambda x, a_1, mu_1, sig_1, a_2, mu_2, sig_2: 
         double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2, param_1[0], param_1[1]),
@@ -103,6 +117,12 @@ def main():
     plt.show()
     plt.clf()
     
+    plt.plot(tail,count_tail, label = 'tail')
+    plt.plot(center, count_center, 'k', label = 'center')
+    plt.legend()
+    plt.show()
+    plt.clf
+    
     #Residual
     
     res_1 = count_1_fit - count_1
@@ -115,7 +135,7 @@ def main():
     r_sq_1 = 1 - (np.sum((count_1- count_1_fit)**2)/(np.sum((count_1-np.mean(count_1))**2)))
     r_sq_1_d = 1 - (np.sum((count_1- count_1_d_fit)**2)/(np.sum((count_1-np.mean(count_1))**2)))
     
-    print(f'single = {r_sq_1}\ndouble = {r_sq_1_d}\n{r_sq_1_d - r_sq_1}')
+    # print(f'single = {r_sq_1}\ndouble = {r_sq_1_d}\n{r_sq_1_d - r_sq_1}')
     # beta = 2
     # m = 5
     # crystal_1 = crystalball.pdf(bins_1, beta, m)
@@ -130,18 +150,19 @@ def main():
     # plt.ylabel('Residual')
     # plt.show()
     # plt.clf()
-    plt.scatter(bins_1,res_1_sq, marker = 'o', lw = 1, color = 'k', label = 'gauss')
-    plt.scatter(bins_1,res_1_d_sq, marker = 'x', lw = 1, color = 'r', label = 'double gauss')
-    plt.title('Residual squared plot for peak 1')
-    plt.xlabel('Mass')
-    plt.ylabel('Residual')
-    plt.legend()
-    plt.show()
-    plt.clf()
+    # plt.scatter(bins_1,res_1_sq, marker = 'o', lw = 1, color = 'k', label = 'gauss')
+    # plt.scatter(bins_1,res_1_d_sq, marker = 'x', lw = 1, color = 'r', label = 'double gauss')
+    # plt.title('Residual squared plot for peak 1')
+    # plt.xlabel('Mass')
+    # plt.ylabel('Residual')
+    # plt.legend()
+    # plt.show()
+    # plt.clf()
 
 a = datetime.datetime.now()    
 main()
 b = datetime.datetime.now() - a
 print(b)
+S
 
 
