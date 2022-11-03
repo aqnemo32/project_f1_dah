@@ -35,7 +35,7 @@ def main():
     count_3 = []
 
     # setting up the peak and background parts of the histogram
-    for i,j in zip(bins, count):
+    for i,j in zip(bins+0.5*(bins[1]-bins[0]), count):
         # why does changing the limits of what can be qualified as the first peak, change the what gets appended to tails
         if i > 9.2 and i <9.7:
             bins_1.append(i)
@@ -70,22 +70,30 @@ def main():
     # count_2_clean = np.array(count_2) - decay(np.array(bins_2), param_back[0], param_back[1])
     # count_3_clean = np.array(count_3) - decay(np.array(bins_3), param_back[0], param_back[1])
     
-    param_1, cov_1 = curve_fit(gauss, bins_1, count_1, p0 = [10, 0.3,9.5])
+    param_1, cov_1 = curve_fit(gauss, bins_1, count_1, p0 = [10, 0.05,9.45])
+    mean_1 = param_1[2]
+    std_1 = param_1[1]
+    print(f"{mean_1=}\n{std_1=}")
     # why does changing the limits of peak 1 means that the tail center split not work anymore
     tail = []
     count_tail = []
     center = []
     count_center = []
+    # print(bins_1, count_1)
     
     for i,j in zip(bins_1, count_1):
-        if i > param_1[2]-2*param_1[1] and i < param_1[2]+2*param_1[1]:
-            print('i')
+        if i > mean_1-2*std_1 and i < mean_1+2*std_1:
+
             center.append(i)
             count_center.append(j)
         elif i < param_1[2]-2*param_1[1] or i > param_1[2]+2*param_1[1]:
-            print('j')
+
             tail.append(i)
             count_tail.append(j)
+    param_tail, cov_t = curve_fit(gauss, tail, count_tail, p0 = [4, 0.1, 9.45])
+    param_center, cov_c = curve_fit(gauss, center, count_center, p0= [10, 0.04, 9.45])
+    # now that i made the double gaussian, need to find a way of combining the two gaussians into one, 
+    # possible using 
 
     print(center)
     param_1_d, cov_1_d = curve_fit(
@@ -160,6 +168,13 @@ def main():
     # plt.legend()
     # plt.show()
     # plt.clf()
+    plt.plot(bins_1, gauss(bins_1, param_tail[0], param_tail[1], param_tail[2]), 'k', label = 'gauss tail')
+    plt.plot(bins_1, gauss(bins_1, param_center[0], param_center[1], param_center[2]), 'r', label = 'gauss center')
+    plt.plot(tail,count_tail, label = 'tail')
+    plt.plot(center, count_center, 'y', label = 'center')
+    plt.legend()
+    plt.show()
+    plt.clf
 
 a = datetime.datetime.now()    
 main()
