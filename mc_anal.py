@@ -37,12 +37,12 @@ def main():
     # setting up the peak and background parts of the histogram
     for i,j in zip(bins, count):
         # why does changing the limits of what can be qualified as the first peak, change the what gets appended to tails
-        if i > 9.05 and i <9.7:
+        if i > 9.2 and i <9.7:
             bins_1.append(i)
             count_1.append(j)
-        elif i < 9.2 or i > 10.55:
-            bins_back.append(i)
-            count_back.append(j)
+        # elif i < 9.2 or i > 10.55:
+        #     bins_back.append(i)
+        #     count_back.append(j)
         elif i < 9.8 and i > 9.7:
             bins_back.append(i)
             count_back.append(j)
@@ -71,20 +71,22 @@ def main():
     # count_3_clean = np.array(count_3) - decay(np.array(bins_3), param_back[0], param_back[1])
     
     param_1, cov_1 = curve_fit(gauss, bins_1, count_1, p0 = [10, 0.3,9.5])
-    print()
-    # tail = double_gauss(bins_1, 10, 0.2, 9.45, 2, 0.4, 9.45, param_1[0], param_1[1])
-    # print(tail)
+    # why does changing the limits of peak 1 means that the tail center split not work anymore
     tail = []
     count_tail = []
     center = []
     count_center = []
+    
     for i,j in zip(bins_1, count_1):
-        if i < param_1[2]-2*param_1[1] or i > param_1[2]+2*param_1[1]:
-            tail.append(i)
-            count_tail.append(j)
-        elif i > param_1[2]-2*param_1[1] and i < param_1[2]+2*param_1[1]:
+        if i > param_1[2]-2*param_1[1] and i < param_1[2]+2*param_1[1]:
+            print('i')
             center.append(i)
             count_center.append(j)
+        elif i < param_1[2]-2*param_1[1] or i > param_1[2]+2*param_1[1]:
+            print('j')
+            tail.append(i)
+            count_tail.append(j)
+
     print(center)
     param_1_d, cov_1_d = curve_fit(
         lambda x, a_1, mu_1, sig_1, a_2, mu_2, sig_2: 
@@ -93,7 +95,7 @@ def main():
         p0 = [10, 0.2, 9.45, 2, 0.4, 9.45], maxfev = 4000)
         
     
-    print(param_1, param_1_d)
+    print(param_1,'\n' ,param_1_d)
     # param_2, cov_2 = curve_fit(gauss, bins_2, count_2_clean, p0 = [5000, 0.3,10.1])
     # param_3, cov_3 = curve_fit(gauss, bins_3, count_3_clean, p0 = [2500, 0.3,10.35])
     
@@ -163,6 +165,5 @@ a = datetime.datetime.now()
 main()
 b = datetime.datetime.now() - a
 print(b)
-S
 
 
