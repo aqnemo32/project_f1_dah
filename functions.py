@@ -51,7 +51,7 @@ def decay(x, a, b):
     '''
     return a*np.exp(x*b)
 
-def double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2):
+def double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2, mean_gauss_fit, sig_gauss_fit):
     '''
     
 
@@ -78,4 +78,14 @@ def double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2):
         DESCRIPTION.
 
     '''
-    return a_1*np.exp(-np.square(x-mu_1)/(2*np.square(sig_1)))+a_2*np.exp(-np.square(x-mu_2)/(2*np.square(sig_2)))
+    tail = []
+    center = []
+    for i in x:
+        if i< mean_gauss_fit-1*sig_gauss_fit or i > mean_gauss_fit-1*sig_gauss_fit:
+            tail.append(i)
+        else:
+            center.append[i]
+    # return tail
+    return a_2*np.exp(-np.square(tail-mu_2)/(2*np.square(sig_2))) 
+    return a_1*np.exp(-np.square(center-mu_1)/(2*np.square(sig_1)))
+        
