@@ -92,10 +92,26 @@ def main():
             count_tail.append(j)
     param_tail, cov_t = curve_fit(gauss, tail, count_tail, p0 = [4, 0.1, 9.45])
     param_center, cov_c = curve_fit(gauss, center, count_center, p0= [10, 0.04, 9.45])
+    
+    
+    tail_fit = gauss(tail, param_tail[0], param_tail[1], param_tail[2])
+    center_fit = gauss(center, param_center[0], param_center[1], param_center[2])
+    # print(tail)
+    tail_1st_index = tail_fit < 9.5
+    split_of_tail_ends = len(tail_1st_index)-1
+    tail_1st_half = tail[:split_of_tail_ends]
+    tail_2nd_half = tail[split_of_tail_ends:]
+    # need to find a way of combining the tail and center of the double gaussian fit
+    # double_gauss_fit = np.array([gauss(tail_1st_half, param_tail[0], param_tail[1], param_tail[2]),
+    #                              gauss(center, param_tail[0], param_tail[1], param_tail[2]),
+    #                              gauss(tail_2nd_half, param_tail[0], param_tail[1], param_tail[2])])
+    # print('double gauss fit', double_gauss_fit)
+    # print(f'{len(tail)}\n{len(tail_1st_half) + len(tail_2nd_half)}')
+
     # now that i made the double gaussian, need to find a way of combining the two gaussians into one, 
     # possible using 
 
-    print(center)
+    # print(center)
     param_1_d, cov_1_d = curve_fit(
         lambda x, a_1, mu_1, sig_1, a_2, mu_2, sig_2: 
         double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2, param_1[0], param_1[1]),
@@ -103,7 +119,7 @@ def main():
         p0 = [10, 0.2, 9.45, 2, 0.4, 9.45], maxfev = 4000)
         
     
-    print(param_1,'\n' ,param_1_d)
+    # print(param_1,'\n' ,param_1_d)
     # param_2, cov_2 = curve_fit(gauss, bins_2, count_2_clean, p0 = [5000, 0.3,10.1])
     # param_3, cov_3 = curve_fit(gauss, bins_3, count_3_clean, p0 = [2500, 0.3,10.35])
     
@@ -118,20 +134,20 @@ def main():
     
     
     # plt.plot(bins[1:], count)
-    plt.plot(bins_1, count_1_fit, '--', lw=2)
-    plt.plot(bins_1, count_1_d_fit,'r', lw=1)
-    # plt.plot(bins_2, count_2_fit)
-    # plt.plot(bins_3, count_3_fit)
-    plt.xlabel('Bin Count')
-    plt.ylabel('Mass (units)')
-    plt.show()
-    plt.clf()
+    # plt.plot(bins_1, count_1_fit, '--', lw=2)
+    # plt.plot(bins_1, count_1_d_fit,'r', lw=1)
+    # # plt.plot(bins_2, count_2_fit)
+    # # plt.plot(bins_3, count_3_fit)
+    # plt.xlabel('Bin Count')
+    # plt.ylabel('Mass (units)')
+    # plt.show()
+    # plt.clf()
     
-    plt.plot(tail,count_tail, label = 'tail')
-    plt.plot(center, count_center, 'k', label = 'center')
-    plt.legend()
-    plt.show()
-    plt.clf
+    # plt.plot(tail,count_tail, label = 'tail')
+    # plt.plot(center, count_center, 'k', label = 'center')
+    # plt.legend()
+    # plt.show()
+    # plt.clf
     
     #Residual
     
@@ -168,13 +184,18 @@ def main():
     # plt.legend()
     # plt.show()
     # plt.clf()
-    plt.plot(bins_1, gauss(bins_1, param_tail[0], param_tail[1], param_tail[2]), 'k', label = 'gauss tail')
-    plt.plot(bins_1, gauss(bins_1, param_center[0], param_center[1], param_center[2]), 'r', label = 'gauss center')
-    plt.plot(tail,count_tail, label = 'tail')
-    plt.plot(center, count_center, 'y', label = 'center')
-    plt.legend()
-    plt.show()
-    plt.clf
+    # plt.plot(tail, tail_fit, 'k', label = 'gauss tail')
+    # plt.plot(center, center_fit, 'r', label = 'gauss center')
+    # plt.plot(tail,count_tail, label = 'tail')
+    # plt.plot(center, count_center, 'y', label = 'center')
+    # plt.legend()
+    # plt.show()
+    # plt.clf
+    
+    # plt.plot(bins_1, double_gauss_fit, 'r')
+    # plt.plot(bins_1, count_1, 'k', '--')
+    # plt.show()
+    # plt.clf()
 
 a = datetime.datetime.now()    
 main()
