@@ -125,12 +125,7 @@ def main():
     plt.clf()
     print(f'{chi_sq_gauss=}\n{chi_sq_d_gauss=}')
     # p0 = [1, 2, mean_1, std_1]), 
-    rv = crystalball(low_lim, 3)
-    plt.plot(bins_1, rv.pdf(bins_1), label = 'Crystal Ball')
-    plt.plot(bins_1, count_1, '--', label = 'Data')
-    plt.legend()
-    plt.show()
-    plt.clf()
+
     
     # crystal = Root.crystalball_function(bins_1,p0 = [1, 2, mean_1, std_1])
     # plt.plot(bins_1, crystal)
