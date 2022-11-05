@@ -8,10 +8,11 @@ Created on Wed Nov  2 22:47:32 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import crystalball
 from scipy.optimize import curve_fit
 import datetime
 
-from functions import gauss, decay, double_gauss
+from functions import gauss, decay, double_gauss, chi_sq
 
 def main():
     xmass = np.load('xmass.npy')
@@ -74,8 +75,9 @@ def main():
     mean_1 = param_1[2]
     std_1 = param_1[1]
     print(f"{mean_1=}\n{std_1=}")
+    gauss_fit = gauss(bins_1, param_1[0], param_1[1], param_1[2]) 
     # why does changing the limits of peak 1 means that the tail center split not work anymore
-
+    chi_sq_gauss = chi_sq(gauss_fit, count_1)
     tail_1st = []
     count_tail_1st = []
     tail_2nd = []
@@ -84,9 +86,10 @@ def main():
     center = []
     count_center = []
     #defines the width of the 'center' region
-    w = 5
+    w = 2
     low_lim = mean_1 - w*std_1
     up_lim = mean_1 + w*std_1
+    print(f'{low_lim=}\n{up_lim=}')
     # print(bins_1, count_1)
     
     for i,j in zip(bins_1, count_1):
@@ -112,40 +115,38 @@ def main():
     
     tail_fit = gauss(np.concatenate((tail_1st, tail_2nd)), param_tail[0], param_tail[1], param_tail[2])
     center_fit = gauss(center, param_center[0], param_center[1], param_center[2])
-    # print(f'{tail_fit=}')
-    # print(f'{param_1[2]=}'
-    print(f'{tail_1st=}\n{center=}\n{tail_2nd=}')
-    print(f'{bins_1=}')
-    print(f'{len(tail_1st)=}\n{len(tail_2nd)=}\n{len(center)=}\n{len(bins_1)=}')
-    print(f'{len(tail)+len(center)=}')
+
     double_gauss_fit = np.concatenate((tail_fit[:len(tail_1st)], center_fit, tail_fit[len(tail_1st):]))
+    chi_sq_d_gauss = chi_sq(double_gauss_fit, count_1)
     
     plt.plot(bins_1, double_gauss_fit)
+    plt.plot(bins_1, count_1, '--')
     plt.show()
     plt.clf()
+    print(f'{chi_sq_gauss=}\n{chi_sq_d_gauss=}')
+    # p0 = [1, 2, mean_1, std_1]), 
+    rv = crystalball(low_lim, 3)
+    plt.plot(bins_1, rv.pdf(bins_1), label = 'Crystal Ball')
+    plt.plot(bins_1, count_1, '--', label = 'Data')
+    plt.legend()
+    plt.show()
+    plt.clf()
+    
+    # crystal = Root.crystalball_function(bins_1,p0 = [1, 2, mean_1, std_1])
+    # plt.plot(bins_1, crystal)
+    # plt.show()
+    # plt.clf()
     # need to find a way of combining the tail and center of the double gaussian fit
-    # double_gauss_fit = np.array([gauss(tail_1st_half, param_tail[0], param_tail[1], param_tail[2]),
-    #                              gauss(center, param_tail[0], param_tail[1], param_tail[2]),
-    #                              gauss(tail_2nd_half, param_tail[0], param_tail[1], param_tail[2])])
-    # print('double gauss fit', double_gauss_fit)
-    # print(f'{len(tail)}\n{len(tail_1st_half) + len(tail_2nd_half)}')
+
 
     # now that i made the double gaussian, need to find a way of combining the two gaussians into one, 
     # possible using 
 
-    # print(center)
-    # param_1_d, cov_1_d = curve_fit(
-    #     lambda x, a_1, mu_1, sig_1, a_2, mu_2, sig_2: 
-    #     double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2, param_1[0], param_1[1]),
-    #     bins_1, count_1,
-    #     p0 = [10, 0.2, 9.45, 2, 0.4, 9.45], maxfev = 4000)
         
     
-    # print(param_1,'\n' ,param_1_d)
-    # param_2, cov_2 = curve_fit(gauss, bins_2, count_2_clean, p0 = [5000, 0.3,10.1])
-    # param_3, cov_3 = curve_fit(gauss, bins_3, count_3_clean, p0 = [2500, 0.3,10.35])
+
     
-    count_1_fit = gauss(bins_1, param_1[0], param_1[1], param_1[2]) 
+
     # count_1_d_fit = double_gauss(bins_1, param_1_d[0], param_1_d[1], param_1_d[2],
     #                 param_1_d[3], param_1_d[4], param_1_d[5], param_1[0], param_1[1]) 
     # count_2_fit = gauss(bins_2, param_2[0], param_2[1], param_2[2]) + decay(

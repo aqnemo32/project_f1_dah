@@ -88,4 +88,23 @@ def double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2, mean_gauss_fit, sig_gaus
 
     return a_2*np.exp(-np.square(tail-mu_2)/(2*np.square(sig_2))) 
     return a_1*np.exp(-np.square(center-mu_1)/(2*np.square(sig_1)))
+
+def chi_sq(fit,data):
+    '''
+    
+
+    Parameters
+    ----------
+    fit : TYPE
+        DESCRIPTION.
+    data : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    '''
+    return np.sum((np.square(data-fit))/fit)
         
