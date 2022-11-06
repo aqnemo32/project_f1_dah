@@ -12,7 +12,7 @@ from scipy.stats import crystalball
 from scipy.optimize import curve_fit
 import datetime
 
-from functions import gauss, decay, double_gauss, chi_sq
+from functions import *
 
 def main():
     xmass = np.load('xmass.npy')
@@ -107,13 +107,16 @@ def main():
             
     tail_1st = np.array(tail_1st)
     tail_2nd = np.array(tail_2nd)
+    test1, count1, testc, countc, test2, count2 = peak_split(bins_1, count_1, std_1, mean_1)
+    print(f'{tail_1st-test1=}')
     tail = np.concatenate((tail_1st, tail_2nd))
     count_tail = np.concatenate((count_tail_1st, count_tail_2nd))
+    
     param_tail, cov_t = curve_fit(gauss, tail, count_tail, p0 = [5, 0.1, 9.45], maxfev = 1600)
     param_center, cov_c = curve_fit(gauss, center, count_center, p0= [10, 0.04, 9.45])
     
     
-    tail_fit = gauss(np.concatenate((tail_1st, tail_2nd)), param_tail[0], param_tail[1], param_tail[2])
+    tail_fit = gauss(tail, param_tail[0], param_tail[1], param_tail[2])
     center_fit = gauss(center, param_center[0], param_center[1], param_center[2])
 
     double_gauss_fit = np.concatenate((tail_fit[:len(tail_1st)], center_fit, tail_fit[len(tail_1st):]))

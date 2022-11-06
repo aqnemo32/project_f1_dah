@@ -107,4 +107,44 @@ def chi_sq(fit,data):
 
     '''
     return np.sum((np.square(data-fit))/fit)
+
+def peak_split(x, y, sig, mu):
+    '''
+    
+
+    Parameters
+    ----------
+    x : TYPE
+        DESCRIPTION.
+    y : TYPE
+        DESCRIPTION
+    sig : TYPE
+        DESCRIPTION.
+    mu : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    int
+        DESCRIPTION.
+
+    '''
+
+    #defines the width of the 'center' region
+    w = 2
+    low_lim = mu - w*sig
+    up_lim = mu + w*sig
+    # almost working, get Honza to look at it
+    tail_1st = x[x < low_lim]
+    count_tail_1st = y[:len(tail_1st)]
+    
+    tail_2nd = x[x >= up_lim]
+    count_tail_2nd = y[len(x)-len(tail_2nd)-1:]
+
+    center = x[x >= low_lim and x < up_lim]
+    count_center = y[len(tail_1st):len(x)-len(tail_2nd)]
+    # print(bins_1, count_1)
+    
+            
+    return tail_1st, count_tail_1st, center, count_center, tail_2nd, count_tail_2nd
         
