@@ -136,13 +136,13 @@ def peak_split(x, y, sig, mu):
     up_lim = mu + w*sig
     # almost working, get Honza to look at it
     tail_1st = x[x < low_lim]
-    count_tail_1st = y[:len(tail_1st)]
+    count_tail_1st = y[x < low_lim]
     
     tail_2nd = x[x >= up_lim]
-    count_tail_2nd = y[len(x)-len(tail_2nd)-1:]
+    count_tail_2nd = y[x >= up_lim]
 
-    center = x[x >= low_lim and x < up_lim]
-    count_center = y[len(tail_1st):len(x)-len(tail_2nd)]
+    center = x[(x >= low_lim) & (x < up_lim)]
+    count_center = y[(x >= low_lim) & (x < up_lim)]
     # print(bins_1, count_1)
     
             

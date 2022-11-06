@@ -24,7 +24,11 @@ def main():
     # print(b)
     count , bins, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
     plt.clf()
-
+    
+    '''
+    Rewrite the peak indexing using numpy, similar to peak_split function in functions.py
+    '''
+    
     #histogram of the peaks from raw data
     bins_1 = []
     count_1 = []
@@ -53,6 +57,9 @@ def main():
         elif i > 10.25 and i <10.45:
             bins_3.append(i)
             count_3.append(j)
+            
+    bins_1 = np.array(bins_1)
+    count_1 = np.array(count_1)
     
     # print(f'{len(bins_1)}\n{len(count_1)}')
     # fitting the exponential decay of the background count
@@ -76,39 +83,11 @@ def main():
     std_1 = param_1[1]
     print(f"{mean_1=}\n{std_1=}")
     gauss_fit = gauss(bins_1, param_1[0], param_1[1], param_1[2]) 
-    # why does changing the limits of peak 1 means that the tail center split not work anymore
-    chi_sq_gauss = chi_sq(gauss_fit, count_1)
-    tail_1st = []
-    count_tail_1st = []
-    tail_2nd = []
-    count_tail_2nd = []
-
-    center = []
-    count_center = []
-    #defines the width of the 'center' region
-    w = 2
-    low_lim = mean_1 - w*std_1
-    up_lim = mean_1 + w*std_1
-    print(f'{low_lim=}\n{up_lim=}')
-    # print(bins_1, count_1)
     
-    for i,j in zip(bins_1, count_1):
-        if i > low_lim and i < up_lim:
-            center.append(i)
-            count_center.append(j)
-            
-        elif i < low_lim:
-            tail_1st.append(i)
-            count_tail_1st.append(j)
-            
-        elif i> up_lim:
-            tail_2nd.append(i)
-            count_tail_2nd.append(j)
-            
-    tail_1st = np.array(tail_1st)
-    tail_2nd = np.array(tail_2nd)
-    test1, count1, testc, countc, test2, count2 = peak_split(bins_1, count_1, std_1, mean_1)
-    print(f'{tail_1st-test1=}')
+    chi_sq_gauss = chi_sq(gauss_fit, count_1)
+
+    tail_1st, count_tail_1st, center, count_center, tail_2nd, count_tail_2nd = peak_split(bins_1, count_1, std_1, mean_1)
+
     tail = np.concatenate((tail_1st, tail_2nd))
     count_tail = np.concatenate((count_tail_1st, count_tail_2nd))
     
@@ -122,8 +101,8 @@ def main():
     double_gauss_fit = np.concatenate((tail_fit[:len(tail_1st)], center_fit, tail_fit[len(tail_1st):]))
     chi_sq_d_gauss = chi_sq(double_gauss_fit, count_1)
     
-    plt.plot(bins_1, double_gauss_fit)
-    plt.plot(bins_1, count_1, '--')
+    plt.scatter(bins_1, double_gauss_fit, marker = 'x')
+    plt.plot(bins_1, count_1, '--', color = 'k')
     plt.show()
     plt.clf()
     print(f'{chi_sq_gauss=}\n{chi_sq_d_gauss=}')
