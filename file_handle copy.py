@@ -7,11 +7,6 @@ Created on Tue Nov  1 14:17:35 2022
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-import datetime
-from scipy.optimize import curve_fit
-from scipy.stats import crystalball
-
 
 def main():
     filename = 'mc.bin'
