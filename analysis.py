@@ -52,7 +52,7 @@ def main():
             bins_3.append(i)
             count_3.append(j)
     
-    # print(f'{len(bins_1)}\n{len(count_1)}')
+    print(f'{len(bins_1)}\n{len(count_1)}')
     # fitting the exponential decay of the background count
         
     param_back, cov_back = curve_fit(decay, bins_back, count_back)
