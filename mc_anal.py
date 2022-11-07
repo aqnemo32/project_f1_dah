@@ -20,11 +20,10 @@ def main():
     # b = datetime.datetime.now() - a
     # print(b)
     count , bins, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
+    plt.show()
     plt.clf()
     bins = bins[1:]
-    '''
-    Rewrite the peak indexing using numpy, similar to peak_split function in functions.py
-    '''
+
     
     #histogram of the peaks from raw data
     bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
