@@ -31,24 +31,7 @@ def main():
     count_1 = count[(bins > 9.2) & (bins < 9.7)]
 
 
-    # setting up the peak and background parts of the histogram
-    
-    # print(f'{len(bins_1)}\n{len(count_1)}')
-    # fitting the exponential decay of the background count
-        
-    # param_back, cov_back = curve_fit(decay, bins_back, count_back)
-
-    # back_sub = decay(np.array(bins_back), param_back[0], param_back[1])
-    # plt.scatter(bins_back, back_sub, color = 'r')
-    # plt.plot(bins, decay(np.array(bins), param_back[0], param_back[1]), color = 'b')
-    # plt.show()
-    # plt.clf()
-    
-    # count_clean = np.array(count) - decay(np.array(bins[1:]), param_back[0], param_back[1])
-    
-    # count_1_clean = np.array(count_1) - decay(np.array(bins_1), param_back[0], param_back[1])
-    # count_2_clean = np.array(count_2) - decay(np.array(bins_2), param_back[0], param_back[1])
-    # count_3_clean = np.array(count_3) - decay(np.array(bins_3), param_back[0], param_back[1])
+    # for the MC simulaton assuming ther is no background
     
     param_1, cov_1 = curve_fit(gauss, bins_1, count_1, p0 = [10, 0.05,9.45])
     mean_1 = param_1[2]
