@@ -6,7 +6,6 @@ Created on Wed Nov  2 22:47:32 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import crystalball
 from scipy.optimize import curve_fit
 import datetime
 
@@ -22,42 +21,17 @@ def main():
     # print(b)
     count , bins, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
     plt.clf()
-    
+    bins = bins[1:]
     '''
     Rewrite the peak indexing using numpy, similar to peak_split function in functions.py
     '''
     
     #histogram of the peaks from raw data
-    bins_1 = []
-    count_1 = []
-    bins_back = []
-    count_back= []
-    bins_2 = []
-    count_2 = []
-    bins_3 = []
-    count_3 = []
+    bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
+    count_1 = count[(bins > 9.2) & (bins < 9.7)]
+
 
     # setting up the peak and background parts of the histogram
-    for i,j in zip(bins+0.5*(bins[1]-bins[0]), count):
-        # why does changing the limits of what can be qualified as the first peak, change the what gets appended to tails
-        if i > 9.2 and i <9.7:
-            bins_1.append(i)
-            count_1.append(j)
-        # elif i < 9.2 or i > 10.55:
-        #     bins_back.append(i)
-        #     count_back.append(j)
-        elif i < 9.8 and i > 9.7:
-            bins_back.append(i)
-            count_back.append(j)
-        elif i > 9.85 and i <10.15:
-            bins_2.append(i)
-            count_2.append(j)
-        elif i > 10.25 and i <10.45:
-            bins_3.append(i)
-            count_3.append(j)
-            
-    bins_1 = np.array(bins_1)
-    count_1 = np.array(count_1)
     
     # print(f'{len(bins_1)}\n{len(count_1)}')
     # fitting the exponential decay of the background count
