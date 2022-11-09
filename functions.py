@@ -6,6 +6,8 @@ Created on Wed Nov  2 22:50:27 2022
 @author: achilequarante
 """
 import numpy as np
+from scipy.constants import pi
+from scipy.special import erf
 
 def gauss(x, a, sig, mu):
     '''
@@ -29,6 +31,27 @@ def gauss(x, a, sig, mu):
 
     '''
     return a*np.exp(-np.square(x-mu)/(2*np.square(sig)))
+
+def crystalball(x, alpha, n, xbar, sigma):
+    a = np.absolute(alpha)
+    A = ((n/a)**n)*np.exp(-((a**2)/2))
+    
+    B = n/a - a
+    C = n/a * 1/(n-1) * np.exp(-((a**2)/2))
+    D = np.sqrt(pi/2)*(1+erf(a/np.sqrt(2)))
+    N = 1/(sigma*(C + D))
+
+    out  = []
+    
+    for i in x:
+    
+        if (i-xbar)/sigma > -alpha:
+             out.append(N*np.exp(-np.square(i-xbar)/(2*np.square(sigma))))
+        
+        else:
+            out.append(N*A*(B-((i-xbar)/sigma))**(-n))
+            
+    return np.array(out)
 
 def decay(x, a, b):
     '''

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import datetime
 
-from functions import gauss, decay, double_gauss
+from functions import *
 
 def main():
     xmass = np.load('xmass.npy')
@@ -117,12 +117,17 @@ def main():
     r_sq_1_d = 1 - (np.sum((count_1- count_1_d_fit)**2)/(np.sum((count_1-np.mean(count_1))**2)))
     
     print(f'single = {r_sq_1}\ndouble = {r_sq_1_d}\n{r_sq_1_d - r_sq_1}')
-    # beta = 2
-    # m = 5
-    # crystal_1 = crystalball.pdf(bins_1, beta, m)
-    # plt.plot(bins_1,crystal_1)
-    # plt.show()
-    # plt.clf()
+    
+    
+    #CRYSTAL BALL FUNC
+    
+    beta = 2
+    m = 5
+    crys_param, cryst_cov = curve_fit(crystalball, bins_back, count_back)
+    print(crys_param)
+    plt.plot(bins_1,crystal_1)
+    plt.show()
+    plt.clf()
     
     
     # plt.scatter(bins_1,res_1, marker = 'x', lw = 0.8, color = 'k')

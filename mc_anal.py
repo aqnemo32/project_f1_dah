@@ -60,6 +60,26 @@ def main():
     plt.show()
     plt.clf()
     print(f'{chi_sq_gauss=}\n{chi_sq_d_gauss=}')
+    
+    
+    
+    #CRYSTAL BALL FUNC
+    print(f"{bins_1.shape = }{count_1.shape = }")
+    crys_param, cryst_cov = curve_fit(crystalball, bins_1, count_1, p0 = [1.52, 2, 9.45, 0.03])
+    print(f"{crys_param=}")
+    # crys_param=array([1.52761093, 1.96427377, 9.46309005, 0.03492454])
+    plt.plot(bins_1, count_1, 'r')
+    plt.plot(bins_1, crystalball(bins_1, crys_param[0], crys_param[1], crys_param[2], crys_param[3]))
+    plt.show()
+    plt.clf()
+    
+    
+    
+    
+    
+    
+    
+    
     # p0 = [1, 2, mean_1, std_1]), 
 
     
