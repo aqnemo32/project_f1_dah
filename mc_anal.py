@@ -32,7 +32,7 @@ def main():
 
     # for the MC simulaton assuming ther is no background
     
-    param_1, cov_1 = curve_fit(gauss, bins_1, count_1, p0 = [10, 0.05,9.45])
+    param_1, cov_1 = curve_fit(gauss, bins_1, count_1, p0 = [10, 9.45,0.03])
     mean_1 = param_1[2]
     std_1 = param_1[1]
     print(f"{mean_1=}\n{std_1=}")
@@ -40,13 +40,14 @@ def main():
     
     chi_sq_gauss = chi_sq(gauss_fit, count_1)
 
-    tail_1st, count_tail_1st, center, count_center, tail_2nd, count_tail_2nd = peak_split(bins_1, count_1, std_1, mean_1)
+    tail_1st, count_tail_1st, center, count_center, tail_2nd, count_tail_2nd = peak_split(bins_1, count_1, mean_1, std_1)
 
     tail = np.concatenate((tail_1st, tail_2nd))
     count_tail = np.concatenate((count_tail_1st, count_tail_2nd))
+    print(count_tail)
     
-    param_tail, cov_t = curve_fit(gauss, tail, count_tail, p0 = [5, 0.1, 9.45], maxfev = 1600)
-    param_center, cov_c = curve_fit(gauss, center, count_center, p0= [10, 0.04, 9.45])
+    param_tail, cov_t = curve_fit(gauss, tail, count_tail, p0 = [5, 9.45, 0.04], maxfev = 1600)
+    param_center, cov_c = curve_fit(gauss, center, count_center, p0= [10, 9.45, 0.01])
     
     
     tail_fit = gauss(tail, param_tail[0], param_tail[1], param_tail[2])

@@ -21,36 +21,21 @@ def main():
 
     # b = datetime.datetime.now() - a
     # print(b)
-    count , bins, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
-
+    count , bins_w, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
+    bins = bins_w[1:]
 
     #histogram of the peaks from raw data
-    bins_1 = []
-    count_1 = []
-    bins_back = []
-    count_back= []
-    bins_2 = []
-    count_2 = []
-    bins_3 = []
-    count_3 = []
+    bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
+    count_1 = count[(bins > 9.2) & (bins < 9.7)]
+    bins_back = np.concatenate((bins[(bins < 9.2) | (bins > 10.55)], bins[(bins > 9.7) & (bins < 9.8)]))
+    count_back= np.concatenate((count[(bins < 9.2) | (bins > 10.55)], count[(bins > 9.7) & (bins < 9.8)]))
+    bins_2 = bins[(bins > 9.85) & (bins < 10.15)]
+    count_2 = count[(bins > 9.85) & (bins < 10.15)]
+    bins_3 = bins[(bins > 10.25) & (bins < 10.45)]
+    count_3 = count[(bins > 10.25) & (bins < 10.45)]
 # hello there
     # setting up the peak and background parts of the histogram
-    for i,j in zip(bins, count):
-        if i > 9.25 and i <9.7:
-            bins_1.append(i)
-            count_1.append(j)
-        elif i < 9.2 or i > 10.55:
-            bins_back.append(i)
-            count_back.append(j)
-        elif i < 9.8 and i > 9.7:
-            bins_back.append(i)
-            count_back.append(j)
-        elif i > 9.85 and i <10.15:
-            bins_2.append(i)
-            count_2.append(j)
-        elif i > 10.25 and i <10.45:
-            bins_3.append(i)
-            count_3.append(j)
+
     
     print(f'{len(bins_1)}\n{len(count_1)}')
     # fitting the exponential decay of the background count
@@ -63,40 +48,27 @@ def main():
     # plt.show()
     # plt.clf()
     
-    count_clean = np.array(count) - decay(np.array(bins[1:]), param_back[0], param_back[1])
+    count_clean = count - decay(bins, param_back[0], param_back[1])
     
-    count_1_clean = np.array(count_1) - decay(np.array(bins_1), param_back[0], param_back[1])
-    count_2_clean = np.array(count_2) - decay(np.array(bins_2), param_back[0], param_back[1])
-    count_3_clean = np.array(count_3) - decay(np.array(bins_3), param_back[0], param_back[1])
+    count_1_clean = count_1 - decay(bins_1, param_back[0], param_back[1])
+    count_2_clean = count_2 - decay(bins_2, param_back[0], param_back[1])
+    count_3_clean = count_3 - decay(bins_3, param_back[0], param_back[1])
     
     
-    param_1, cov_1 = curve_fit(gauss, bins_1, count_1_clean, p0 = [10, 0.3,9.5])
+    param_1, cov_1 = curve_fit(gauss, bins_1, count_1_clean, p0 = [10, 9.45, 0.03])
     
-    param_1_d, cov_1_d = curve_fit(
-        lambda x, a_1, mu_1, sig_1, a_2, mu_2, sig_2: 
-        double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2, param_1[0], param_1[1]),
-        bins_1, count_1_clean,
-        p0 = [10, 0.2, 9.45, 2, 0.4, 9.45], maxfev = 4000)
     
-    print(param_1, param_1_d)
-    # param_2, cov_2 = curve_fit(gauss, bins_2, count_2_clean, p0 = [5000, 0.3,10.1])
-    # param_3, cov_3 = curve_fit(gauss, bins_3, count_3_clean, p0 = [2500, 0.3,10.35])
+    print(f"A, mu, sig =  {param_1}")
+
     
     count_1_fit = gauss(bins_1, param_1[0], param_1[1], param_1[2]) + decay(
         np.array(bins_1), param_back[0], param_back[1])
-    count_1_d_fit = double_gauss(bins_1, param_1_d[0], param_1_d[1], param_1_d[2],
-                    param_1_d[3], param_1_d[4], param_1_d[5], param_1[0], param_1[1]) + decay(
-                    np.array(bins_1), param_back[0], param_back[1])
-    # count_2_fit = gauss(bins_2, param_2[0], param_2[1], param_2[2]) + decay(
-    #     np.array(bins_2), param_back[0], param_back[1])
-    # count_3_fit = gauss(bins_3, param_3[0], param_3[1], param_3[2]) + decay(
-    #     np.array(bins_3), param_back[0], param_back[1])
+    
     
     
     
     # plt.plot(bins[1:], count)
     plt.plot(bins_1, count_1_fit, '--', lw=2)
-    plt.plot(bins_1, count_1_d_fit,'r', lw=1)
     # plt.plot(bins_2, count_2_fit)
     # plt.plot(bins_3, count_3_fit)
     plt.xlabel('Bin Count')
@@ -107,28 +79,24 @@ def main():
     #Residual
     
     res_1 = count_1_fit - count_1
-    res_1_d = count_1_d_fit - count_1
-    res_1_d_sq = np.square(res_1_d)
     res_1_sq = np.square(res_1)
     # res_2 = count_2_fit - count_2
     # res_3 = count_3_fit - count_3
     
     r_sq_1 = 1 - (np.sum((count_1- count_1_fit)**2)/(np.sum((count_1-np.mean(count_1))**2)))
-    r_sq_1_d = 1 - (np.sum((count_1- count_1_d_fit)**2)/(np.sum((count_1-np.mean(count_1))**2)))
-    
-    print(f'single = {r_sq_1}\ndouble = {r_sq_1_d}\n{r_sq_1_d - r_sq_1}')
+    print(f"R^2 = {r_sq_1}")
     
     
     #CRYSTAL BALL FUNC
     
-    beta = 2
-    m = 5
-    crys_param, cryst_cov = curve_fit(crystalball, bins_back, count_back)
-    print(crys_param)
-    plt.plot(bins_1,crystal_1)
-    plt.show()
-    plt.clf()
-    
+    # beta = 2
+    # m = 5
+    # crys_param, cryst_cov = curve_fit(crystalball, bins_back, count_back)
+    # print(crys_param)
+    # plt.plot(bins_1,crystal_1)
+    # plt.show()
+    # plt.clf()
+    ###
     
     # plt.scatter(bins_1,res_1, marker = 'x', lw = 0.8, color = 'k')
     # plt.title('Residual plot for peak 1')
@@ -137,7 +105,6 @@ def main():
     # plt.show()
     # plt.clf()
     plt.scatter(bins_1,res_1_sq, marker = 'o', lw = 1, color = 'k', label = 'gauss')
-    plt.scatter(bins_1,res_1_d_sq, marker = 'x', lw = 1, color = 'r', label = 'double gauss')
     plt.title('Residual squared plot for peak 1')
     plt.xlabel('Mass')
     plt.ylabel('Residual')

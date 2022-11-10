@@ -10,7 +10,7 @@ from scipy.constants import pi
 from scipy.special import erf
 
 
-def gauss(x, a, sig, mu):
+def gauss(x, a, mu, sig):
     '''
     
 
@@ -80,9 +80,9 @@ def double_crystalball(x, alpha1, alpha2, n1, n2, xbar, sigma):
     for i in x:
         if (i-xbar)/sigma < -a1:
             out.append(A1*(B1-((i-xbar)/sigma))**(-n1))
-        elif (i-xbar)/sigma < -a1 and (i-xbar)/sigma > a2:
+        elif (i-xbar)/sigma > -a1 and (i-xbar)/sigma < a2:
             out.append(np.exp(-np.square(i-xbar)/(2*np.square(sigma))))
-        else:
+        elif (i-xbar)/sigma > a2:
             out.append(A2*(B2-((i-xbar)/sigma))**(-n2))
             # (i-xbar)/sigma > a2
 
@@ -97,58 +97,21 @@ def decay(x, a, b):
 
     Parameters
     ----------
-    x : TYPE
+    x : array
         DESCRIPTION.
-    a : TYPE
-        DESCRIPTION.
-    b : TYPE
-        DESCRIPTION.
+    a : float
+        defines the amplitude of the deacy.
+    b : float
+        defines the speed of the decay (bigger b steeper curve).
 
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    array
+        a$\cdot$ e^{x\cdot b}$
 
     '''
     return a*np.exp(x*b)
 
-def double_gauss(x, a_1, mu_1, sig_1, a_2, mu_2, sig_2, mean_gauss_fit, sig_gauss_fit):
-    '''
-    
-
-    Parameters
-    ----------
-    x : TYPE
-        DESCRIPTION.
-    a_1 : TYPE
-        DESCRIPTION.
-    a_2 : TYPE
-        DESCRIPTION.
-    mu_1 : TYPE
-        DESCRIPTION.
-    mu_2 : TYPE
-        DESCRIPTION.
-    sig_1 : TYPE
-        DESCRIPTION.
-    sig_2 : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    TYPE
-        DESCRIPTION.
-
-    '''
-    tail = []
-    center = []
-    for i in x:
-        if i< mean_gauss_fit-1*sig_gauss_fit or i > mean_gauss_fit-1*sig_gauss_fit:
-            tail.append(i)
-        else:
-            center.append[i]
-
-    return a_2*np.exp(-np.square(tail-mu_2)/(2*np.square(sig_2))) 
-    return a_1*np.exp(-np.square(center-mu_1)/(2*np.square(sig_1)))
 
 def chi_sq(fit,data):
     '''
@@ -175,14 +138,14 @@ def peak_split(x, y, sig, mu):
 
     Parameters
     ----------
-    x : TYPE
-        DESCRIPTION.
-    y : TYPE
-        DESCRIPTION
-    sig : TYPE
-        DESCRIPTION.
-    mu : TYPE
-        DESCRIPTION.
+    x : array
+        bins.
+    y : array
+        counts
+    sig : float
+        standard deviation from a single gaussian fit of the data.
+    mu : float
+        mean from a single gaussian fit of the data.
 
     Returns
     -------

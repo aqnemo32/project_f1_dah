@@ -50,8 +50,10 @@ a1 = 1
 a2= 1
 n1 = 2
 n2 = 2
-
-plt.plot(x, double_crystalball(x, a1, a2, n1, n2, xbar, sigma), 'k')
+# dp, double_cov = curve_fit(double_crystalball, bins_1, count_1, p0 = [ 1, 1, 2, 2, 9.45, 0.03])
+# plt.scatter(bins_1, count_1, label = 'data', marker = 'x', color = 'k')
+plt.plot(bins_1, double_crystalball(bins_1, 1, 1, 2, 2, 9.45, 0.03), 'r', label = 'fit')
+plt.legend()
 plt.show()
 
 
