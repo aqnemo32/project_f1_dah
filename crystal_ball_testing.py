@@ -9,6 +9,7 @@ Created on Tue Nov  8 17:29:59 2022
 import numpy as np
 from functions import *
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 
 xmass = np.load('xmass.npy')
 
@@ -23,11 +24,11 @@ plt.clf()
 bins = bins[1:]
 
 
-#histogram of the peaks from raw data
+# histogram of the peaks from raw data
 bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
 count_1 = count[(bins > 9.2) & (bins < 9.7)]
 
-x = np.linspace(-5, 2, 1000)
+x = np.linspace(-1, 1, 1000)
 col = ['k', 'r', 'y', 'm', 'c', 'b', 'g']
 alpha = [0, 1, 1, 1, 2, 2, 2]
 n = [1, 1, 2, 3, 4,5,6]
@@ -40,9 +41,17 @@ sigma = 0.5
 # plt.clf()
 
 
-plt.plot(bins_1, count_1, 'k')
-plt.plot(bins_1, crystalball(bins_1, 2, 3, 9.45, 0.03))
+# plt.plot(bins_1, count_1, 'k')
+# plt.plot(bins_1, crystalball(bins_1, 2, 3, 9.45, 0.03))
+# plt.show()
+# plt.clf()
+
+a1 = 1
+a2= 1
+n1 = 2
+n2 = 2
+
+plt.plot(x, double_crystalball(x, a1, a2, n1, n2, xbar, sigma), 'k')
 plt.show()
-plt.clf()
 
 
