@@ -118,11 +118,11 @@ def double_crystalball(x, alpha1, alpha2, n1, n2, mu, sig):
 
     for i in x:
         if (i-mu)/sig < -a1:
-            out.append(A1*(B1-((i-mu)/sig))**(-n1))
+            out.append(N*A1*(B1-((i-mu)/sig))**(-n1))
         elif (i-mu)/sig > -a1 and (i-mu)/sig < a2:
-            out.append(np.exp(-np.square(i-mu)/(2*np.square(sig))))
+            out.append(N*np.exp(-np.square(i-mu)/(2*np.square(sig))))
         elif (i-mu)/sig > a2:
-            out.append(A2*(B2-((i-mu)/sig))**(-n2))
+            out.append(N*A2*(B2-((i-mu)/sig))**(-n2))
             # (i-mu)/sig > a2
 
     
