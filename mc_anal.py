@@ -22,7 +22,7 @@ def main():
     count , bins, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
     plt.show()
     plt.clf()
-    bins = bins[1:]
+    bins = bins[1:] - (bins[1]-bins[0])/2
 
     
     #histogram of the peaks from raw data
