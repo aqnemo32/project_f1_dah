@@ -21,7 +21,7 @@ def main():
     #Finf number of bins using freedman-diaconis rule
     _, n_bins = np.modf((Max-Min)/freedman(xmass))
     
-    count , bins, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'bar', range =(Min, Max), density=True )
+    count , bins, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'bar', range =(Min, Max), density=False )
     plt.show()
     plt.clf()
     bins = bins[1:] - (bins[1]-bins[0])/2
@@ -46,7 +46,6 @@ def main():
 
     tail = np.concatenate((tail_1st, tail_2nd))
     count_tail = np.concatenate((count_tail_1st, count_tail_2nd))
-    print(count_tail)
     
     param_tail, cov_t = curve_fit(gauss, tail, count_tail, p0 = [5, 9.45, 0.04], maxfev = 1600)
     param_center, cov_c = curve_fit(gauss, center, count_center, p0= [10, 9.45, 0.01])
@@ -68,7 +67,7 @@ def main():
     
     #CRYSTAL BALL FUNC
     print(f"{bins_1.shape = }{count_1.shape = }")
-    crys_param, cryst_cov = curve_fit(crystalball, bins_1, count_1, p0 = [1.52, 2, 9.45, 0.03])
+    crys_param, cryst_cov = curve_fit(lambda x, n :crystalball, bins_1, count_1, p0 = [1.52, 2, 9.45, 0.03])
     print(f"{crys_param=}")
     # crys_param=array([1.52761093, 1.96427377, 9.46309005, 0.03492454])
     plt.scatter(bins_1, count_1, color = 'k', lw = 0.8, marker = 'x', label = 'data')

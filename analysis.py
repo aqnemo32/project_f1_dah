@@ -15,14 +15,19 @@ from functions import *
 
 def main():
     xmass = np.load('xmass.npy')
+    mom_tran_pair = np.load('mom_tran_pair.npy')
+    mom_tran_1 = np.load('mom_tran_1.npy')
+    mom_tran_pair_log = np.log10(mom_tran_pair)
+    plt.hist2d(xmass, mom_tran_pair_log, bins = 200, range = [[9.2, 10.5], [-0.25, 1.3]])
+    plt.show()
+    plt.clf()
     
     Min = np.min(xmass)
     Max = np.max(xmass)
-
-    # b = datetime.datetime.now() - a
-    # print(b)
-    count , bins_w, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
-    bins = bins_w[1:]
+    _, n_bins = np.modf((Max-Min)/freedman(xmass))
+    
+    count , bins_w, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'bar', range =(Min, Max), density=True )
+    bins = bins_w[1:] - (bins_w[1] - bins_w[0])/2
 
     #histogram of the peaks from raw data
     bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
