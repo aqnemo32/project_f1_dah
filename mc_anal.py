@@ -16,10 +16,12 @@ def main():
     
     Min = np.min(xmass)
     Max = np.max(xmass)
-
-    # b = datetime.datetime.now() - a
-    # print(b)
-    count , bins, patches = plt.hist(xmass, color = 'k', bins = 600, histtype= 'bar', range =(Min, Max), density=True )
+    
+    
+    #Finf number of bins using freedman-diaconis rule
+    _, n_bins = np.modf((Max-Min)/freedman(xmass))
+    
+    count , bins, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'bar', range =(Min, Max), density=True )
     plt.show()
     plt.clf()
     bins = bins[1:] - (bins[1]-bins[0])/2

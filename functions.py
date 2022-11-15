@@ -8,6 +8,10 @@ Created on Wed Nov  2 22:50:27 2022
 import numpy as np
 from scipy.constants import pi
 from scipy.special import erf
+from scipy.stats import iqr
+
+def freedman(x):
+    return (2/(len(x)**(1/3)))*iqr(x)
 
 
 def gauss(x, a, mu, sig):
