@@ -40,7 +40,7 @@ plt.clf()
 
 _, n_bins_mom_tran_pair = np.modf((np.max(mom_tran_pair)-np.min(mom_tran_pair))/freedman(mom_tran_pair))
 
-plt.hist(mom_tran_pair, color = 'k' ,bins = int(n_bins_mom_tran_pair), histtype= 'bar', density = False, range = (0, 500))
+plt.hist(mom_tran_pair, color = 'k' ,bins = int(n_bins_mom_tran_pair), histtype= 'bar', density = False, range = (0, 50))
 plt.title('Transverse momentum of muon pair (CoM transverse momentum)')
 plt.savefig('/Users/achillequarante/Desktop/dah_graphs_project/mom_tran_pair_hist', format = 'png')
 plt.clf()

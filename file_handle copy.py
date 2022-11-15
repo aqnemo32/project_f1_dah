@@ -9,7 +9,7 @@ Created on Tue Nov  1 14:17:35 2022
 import numpy as np
 
 def main():
-    filename = 'ups-15-small.bin'
+    filename = 'mc.bin'
     f = open(filename, 'r')
     datalist = np.fromfile(f,dtype=np.float32)
     # number of events
