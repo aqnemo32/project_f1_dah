@@ -32,12 +32,12 @@ def main():
         mom_tran_1[i] = xdata[i][4]
         mom_tran_2[i] = xdata[i][5]
         
-    np.save('xmass', xmass)
-    np.save('mom_tran_pair', mom_tran_pair)
-    np.save('rap', rap)
-    np.save('mom_pair', mom_pair)
-    np.save('mom_tran_1', mom_tran_1)
-    np.save('mom_tran_2', mom_tran_2)
+    np.save('xmass_mc', xmass)
+    np.save('mom_tran_pair_mc', mom_tran_pair)
+    np.save('rap_mc', rap)
+    np.save('mom_pair_mc', mom_pair)
+    np.save('mom_tran_1_mc', mom_tran_1)
+    np.save('mom_tran_2_mc', mom_tran_2)
     f.close() 
     
 main()

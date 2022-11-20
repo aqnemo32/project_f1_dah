@@ -12,7 +12,7 @@ import datetime
 from functions import *
 
 def main():
-    xmass = np.load('xmass.npy')
+    xmass = np.load('mc_anal/xmass_mc.npy')
     
     Min = np.min(xmass)
     Max = np.max(xmass)
