@@ -14,13 +14,8 @@ import datetime
 from functions import *
 
 def main():
-    xmass = np.load('xmass.npy')
-    mom_tran_pair = np.load('mom_tran_pair.npy')
-    mom_tran_1 = np.load('mom_tran_1.npy')
-    mom_tran_pair_log = np.log10(mom_tran_pair)
-    plt.hist2d(xmass, mom_tran_pair_log, bins = 200, range = [[9.2, 10.5], [-0.25, 1.3]])
-    plt.show()
-    plt.clf()
+    xmass = np.load('ups_anal/xmass.npy')
+
     
     Min = np.min(xmass)
     Max = np.max(xmass)
@@ -61,19 +56,30 @@ def main():
     
     
     param_1, cov_1 = curve_fit(gauss, bins_1, count_1_clean, p0 = [10, 9.45, 0.03])
+    param_2, cov_2 = curve_fit(gauss, bins_2, count_2_clean, p0 = [10, 10.0, 0.03])
+    param_3, cov_3 = curve_fit(gauss, bins_3, count_3_clean, p0 = [10, 10.27, 0.03])
     
     
     print(f"A, mu, sig =  {param_1}")
 
     
     count_1_fit = gauss(bins_1, param_1[0], param_1[1], param_1[2]) + decay(
-        np.array(bins_1), param_back[0], param_back[1])
+        bins_1, param_back[0], param_back[1])
+
+    count_2_fit = gauss(bins_2, param_2[0], param_2[1], param_2[2]) + decay(
+        bins_2, param_back[0], param_back[1])
+    
+    count_3_fit = gauss(bins_3, param_3[0], param_3[1], param_3[2]) + decay(
+        bins_3, param_back[0], param_back[1])
+    
     
     
     
     
     # plt.plot(bins[1:], count)
-    plt.plot(bins_1, count_1_fit, '--', lw=2)
+    plt.plot(bins_1, count_1_fit, '--', lw = 2, color = 'r')
+    plt.plot(bins_2, count_2_fit, '--', lw = 2, color = 'b')
+    plt.plot(bins_3, count_3_fit, '--', lw = 2, color = 'g')
     # plt.plot(bins_2, count_2_fit)
     # plt.plot(bins_3, count_3_fit)
     plt.xlabel('Bin Count')

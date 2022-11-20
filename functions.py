@@ -19,19 +19,20 @@ def gauss(x, a, mu, sig):
     
     Parameters
     ----------
-    x : TYPE
-        DESCRIPTION.
-    a : TYPE
-        DESCRIPTION.
-    sig : TYPE
-        DESCRIPTION.
-    mu : TYPE
-        DESCRIPTION.
+    x : numpy array
+        histogram bins.
+    a : float
+        defines the amplitude of the gaussian fit.
+    mu : float
+        mean of the distribution, defines the x coordinate of the the gaussian fit maxima.
+    sig : float
+        standard deviation of the distribution, defines the width of the gaussian fit.
+
 
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    numpy array
+        gaussian fit for the given bins, defines the y coordinate on a graph.
 
     '''
     return a*np.exp(-np.square(x-mu)/(2*np.square(sig)))
@@ -41,20 +42,20 @@ def crystalball(x, alpha, n, mu, sig):
     
     Parameters
     ----------
-    x : TYPE
+    x : numpy array
         DESCRIPTION.
-    alpha : TYPE
+    alpha : float
         DESCRIPTION.
-    n : TYPE
+    n : float
         DESCRIPTION.
-    mu : TYPE
+    mu : float
         DESCRIPTION.
-    sig : TYPE
+    sig : float
         DESCRIPTION.
 
     Returns
     -------
-    TYPE
+    numpy array
         DESCRIPTION.
     '''
     a = np.absolute(alpha)
@@ -140,7 +141,7 @@ def decay(x, a, b):
     Parameters
     ----------
     x : array
-        DESCRIPTION.
+        bins of a histogram.
     a : float
         defines the amplitude of the deacy.
     b : float
@@ -149,7 +150,7 @@ def decay(x, a, b):
     Returns
     -------
     array
-        a$\cdot$ e^{x\cdot b}$
+        exponential decay background noise
 
     '''
     return a*np.exp(x*b)
