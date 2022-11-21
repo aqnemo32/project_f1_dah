@@ -1,3 +1,5 @@
 - To use rapidity and transverse momentum binned data, the luminosity and cross section being commom factors, i want to express the ratio of the peaks by using the rapidity and transverse momentum data
 - Is the number of bins for the mass histogram large enough, it is very boxy, but we use the same method for all data sets for the bin width determination (freedman method)
 - Should we do the same method as the cern paper, fixing the width of the 2s and 3s peak as the $\sigma$ of the first peak scaled by mass ratio (can i use the ratio of the mass from the gaussian peak)
+- To do: create on the iminuit maximim likelyhood minimiser similar to the lsq one, check the probfit website for the equation
+- how do i evaluate the quality of a non-linear fit, I think I read that R squared only works for linear models
