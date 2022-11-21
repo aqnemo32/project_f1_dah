@@ -42,6 +42,7 @@ def main():
     # fitting the exponential decay of the background count
         
     param_back, cov_back = curve_fit(decay, bins_back, count_back)
+    print(param_back)
 
     # back_sub = decay(np.array(bins_back), param_back[0], param_back[1])
     # plt.scatter(bins_back, back_sub, color = 'r')
@@ -101,7 +102,7 @@ def main():
     #CRYSTAL BALL FUNC
     
     param_crys_1, cryst_cov = curve_fit(crystalball, 
-        bins_1, count_1_clean, p0 = [2, 0.9, 9.456127695, 0.043517612], maxfev = 4000)
+        bins_1, count_1_clean, p0 = [1.88, 0.9, 9.456127695, 0.043517612], maxfev = 4000)
     print(f"{param_crys_1 = }")
     crystal_1 = crystalball(bins_1, param_crys_1[0], param_crys_1[1], param_crys_1[2], param_crys_1[3])
     plt.plot(bins_1,crystal_1)
