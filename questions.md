@@ -1,7 +1,2 @@
-- how do i get iminuit and root packages installed (found a way to have an inbuilt crystal ball func for both but cant get them to run on Spyder (should i use a diffrent editor (VS code?))
-- For the double gaussian fit, to make the transition smoother, could I take the average of:
-```
-np.mean([tail_1st[-1] center[0]]) and np.mean([tail_2nd[0] center[-1]])
-```
-- When you say 2d plot of 2-dimensional plots of the additional observables vs the invariant mass is that plotting the histograms of the mass versus of the momentum
-- I was watching the fitting lecture and was wondering if the curve_fitting from scipy worked as chi sq minimisation? 
+- To use rapidity and transverse momentum binned data, the luminosity and cross section being commom factors, i want to express the ratio of the peaks by using the rapidity and transverse momentum data
+- Is the number of bins for the mass histogram large enough, it is very boxy, but we use the same method for all data sets for the bin width determination (freedman method)
