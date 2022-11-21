@@ -3,3 +3,4 @@
 - Should we do the same method as the cern paper, fixing the width of the 2s and 3s peak as the $\sigma$ of the first peak scaled by mass ratio (can i use the ratio of the mass from the gaussian peak)
 - To do: create on the iminuit maximim likelyhood minimiser similar to the lsq one, check the probfit website for the equation
 - how do i evaluate the quality of a non-linear fit, I think I read that R squared only works for linear models
+- Is there a way to reduce the noise when the background is subtracted from the the main histogram ?
