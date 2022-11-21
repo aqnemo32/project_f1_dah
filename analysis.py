@@ -21,23 +21,24 @@ def main():
     Max = np.max(xmass)
     _, n_bins = np.modf((Max-Min)/freedman(xmass))
     
-    count , bins_w, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'bar', range =(Min, Max), density=True )
+    count , bins_w, patches = plt.hist(xmass, color = 'k', bins = int(2*n_bins), histtype= 'bar', range =(Min, Max), density=False )
     bins = bins_w[1:] - (bins_w[1] - bins_w[0])/2
 
     #histogram of the peaks from raw data
-    bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
-    count_1 = count[(bins > 9.2) & (bins < 9.7)]
-    bins_back = np.concatenate((bins[(bins < 9.2) | (bins > 10.55)], bins[(bins > 9.7) & (bins < 9.8)]))
-    count_back= np.concatenate((count[(bins < 9.2) | (bins > 10.55)], count[(bins > 9.7) & (bins < 9.8)]))
+    bins_1 = bins[(bins > 9.1) & (bins < 9.7)]
+    count_1 = count[(bins > 9.1) & (bins < 9.7)]
+
     bins_2 = bins[(bins > 9.85) & (bins < 10.15)]
     count_2 = count[(bins > 9.85) & (bins < 10.15)]
+
     bins_3 = bins[(bins > 10.25) & (bins < 10.45)]
     count_3 = count[(bins > 10.25) & (bins < 10.45)]
-# hello there
+
+    bins_back = np.concatenate((bins[(bins < 9.2) | (bins > 10.55)], bins[(bins > 9.7) & (bins < 9.8)]))
+    count_back= np.concatenate((count[(bins < 9.2) | (bins > 10.55)], count[(bins > 9.7) & (bins < 9.8)]))
+
     # setting up the peak and background parts of the histogram
 
-    
-    print(f'{len(bins_1)}\n{len(count_1)}')
     # fitting the exponential decay of the background count
         
     param_back, cov_back = curve_fit(decay, bins_back, count_back)
@@ -95,18 +96,18 @@ def main():
     # res_3 = count_3_fit - count_3
     
     r_sq_1 = 1 - (np.sum((count_1- count_1_fit)**2)/(np.sum((count_1-np.mean(count_1))**2)))
-    print(f"R^2 = {r_sq_1}")
     
     
     #CRYSTAL BALL FUNC
     
-    # beta = 2
-    # m = 5
-    # crys_param, cryst_cov = curve_fit(crystalball, bins_back, count_back)
-    # print(crys_param)
-    # plt.plot(bins_1,crystal_1)
-    # plt.show()
-    # plt.clf()
+    param_crys_1, cryst_cov = curve_fit(crystalball, 
+        bins_1, count_1_clean, p0 = [2, 0.9, 9.456127695, 0.043517612], maxfev = 4000)
+    print(f"{param_crys_1 = }")
+    crystal_1 = crystalball(bins_1, param_crys_1[0], param_crys_1[1], param_crys_1[2], param_crys_1[3])
+    plt.plot(bins_1,crystal_1)
+    plt.scatter(bins_1, count_1_clean, marker = 'x', lw = 1)
+    plt.show()
+    plt.clf()
     ###
     
     # plt.scatter(bins_1,res_1, marker = 'x', lw = 0.8, color = 'k')

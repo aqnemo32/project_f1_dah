@@ -7,6 +7,7 @@ Created on Wed Nov  2 22:47:32 2022
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from lmfit import Model
 import datetime
 
 from functions import *
@@ -57,8 +58,9 @@ def main():
     double_gauss_fit = np.concatenate((tail_fit[:len(tail_1st)], center_fit, tail_fit[len(tail_1st):]))
     chi_sq_d_gauss = chi_sq(double_gauss_fit, count_1)
     
-    plt.scatter(bins_1, double_gauss_fit, marker = 'x')
-    plt.plot(bins_1, count_1, '--', color = 'k')
+    plt.plot(bins_1, double_gauss_fit)
+    plt.scatter(bins_1, count_1, marker = 'x', color = 'k')
+    plt.title('Double Gauss Fit')
     plt.show()
     plt.clf()
     print(f'{chi_sq_gauss=}\n{chi_sq_d_gauss=}')
@@ -66,27 +68,24 @@ def main():
     
     
     #CRYSTAL BALL FUNC
-    print(f"{bins_1.shape = }{count_1.shape = }")
+    # print(f"{bins_1.shape = }{count_1.shape = }")
     crys_param, cryst_cov = curve_fit(crystalball, bins_1, count_1, p0 = [1.82420973, 0.95880333, 9.46127695, 0.03517611], maxfev = 4000)
     print(f"{crys_param=}")
+    crystal_ball_fit = crystalball(bins_1, crys_param[0], crys_param[1], crys_param[2], crys_param[3])
     # crys_param=array([1.52761093, 1.96427377, 9.46309005, 0.03492454])
     plt.scatter(bins_1, count_1, color = 'k', lw = 0.8, marker = 'x', label = 'data')
-    plt.plot(bins_1, crystalball(bins_1, crys_param[0], crys_param[1], crys_param[2], crys_param[3]), 'r', label = 'fit')
-    plt.title('Normalised count versus mass (Crystal Ball fit)')
+    plt.plot(bins_1, crystal_ball_fit, 'r', label = 'fit')
+    plt.title('Count versus mass (Crystal Ball fit)')
     plt.xlabel('Mass')
     plt.ylabel('Count')
     plt.legend()
     plt.show()
     plt.clf()
+    chi_sq_cb = chi_sq(crystal_ball_fit, count_1)
+    print(f"{chi_sq_cb = }")
 
-    crys_d_param, crys_d_cov = curve_fit(double_crystalball, bins_1, count_1,
-     p0 = [1.82420973, 2,0.95880333, 1.5,9.46127695, 0.03517611], maxfev = 4000)
-    plt.plot(bins_1, double_crystalball(bins_1, 1.82420973, 2.        , 0.95880333, 1.5       , 9.46127695,
-       0.03517611))
-    plt.scatter(bins_1, count_1)
-    plt.show()
-    plt.clf()
-    print(f"{crys_d_param = }")
+
+
     
     
     
