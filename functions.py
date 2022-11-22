@@ -80,62 +80,6 @@ def crystalball(x, alpha, n, mu, sig):
 
 
 
-def double_crystalball(x, alpha1, alpha2, n1, n2, mu, sig):
-    '''
-    
-    Parameters
-    ----------
-    x : TYPE
-        DESCRIPTION.
-    alpha1 : TYPE
-        DESCRIPTION.
-    alpha1 : TYPE
-        DESCRIPTION.
-    n1 : TYPE
-        DESCRIPTION.
-    n2 : TYPE
-        DESCRIPTION.
-    mu : TYPE
-        DESCRIPTION.
-    sig : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    TYPE
-        DESCRIPTION.
-    '''
-    out = []
-    a1 = np.absolute(alpha1)
-    a2 = np.absolute(alpha2)
-
-    A1 = ((n1/a1)**n1)*np.exp(-((a1**2)/2))
-    B1 = n1/a1 - a1
-    C1= n1/a1 * 1/(n1-1) * np.exp(-((a1**2)/2))
-    D1 = np.sqrt(pi/2)*(1+erf(a1/np.sqrt(2)))
-    N1 = 1/(sig*(C1 + D1))
-
-    A2 = ((n2/a2)**n2)*np.exp(-((a2**2)/2))
-    B2 = n2/a2 - a2
-    C2= n2/a2 * 1/(n2-1) * np.exp(-((a2**2)/2))
-    D2 = np.sqrt(pi/2)*(1+erf(a2/np.sqrt(2)))
-    N2 = 1/(sig*(C2 + D2))
-    
-    N = (N1 + N2)/2
-
-    for i in x:
-        if (i-mu)/sig < -a1:
-            out.append(N*A1*(B1-((i-mu)/sig))**(-n1))
-        elif (i-mu)/sig > -a1 and (i-mu)/sig < a2:
-            out.append(N*np.exp(-np.square(i-mu)/(2*np.square(sig))))
-        elif (i-mu)/sig > a2:
-            out.append(N*A2*(B2-((i-mu)/sig))**(-n2))
-            # (i-mu)/sig > a2
-
-    
-    return np.array(out)
-
-
 
 def decay(x, a, b):
     '''
