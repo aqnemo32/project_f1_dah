@@ -14,9 +14,9 @@ import datetime
 from functions import *
 
 def main():
-    xmass_raw = np.load('ups_anal/xmass.npy')
-    tran_1_ups = np.load('ups_anal/mom_tran_1.npy')
-    tran_2_ups = np.load('ups_anal/mom_tran_2.npy')
+    xmass_raw = np.load('ups_big_anal/xmass_big.npy')
+    tran_1_ups = np.load('ups_big_anal/mom_tran_1_big.npy')
+    tran_2_ups = np.load('ups_big_anal/mom_tran_2_big.npy')
 
 
     
@@ -26,18 +26,25 @@ def main():
     # Using R we clean the data in such a way that the purity of the peaks in the histogram is increased
     xmass = xmass_raw[R<0.42]
 
+    Min_raw = np.min(xmass_raw)
+    Max_raw = np.max(xmass_raw)
+
+    _, n_bins = np.modf((Max_raw - Min_raw)/freedman(xmass_raw))
+    n_bins = int(n_bins*2)
+    print(n_bins)
+    
+
     Min = np.min(xmass)
     Max = np.max(xmass)
-    _, n_bins = np.modf((Max-Min)/freedman(xmass_raw))
-    
+
     count , bins_w, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
     plt.clf()
     bins = bins_w[1:] - (bins_w[1] - bins_w[0])/2
 
     #histogram of the peaks from raw data
 
-    bins_1 = bins[(bins > 9.1) & (bins < 9.7)]
-    count_1 = count[(bins > 9.1) & (bins < 9.7)]
+    bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
+    count_1 = count[(bins > 9.2) & (bins < 9.7)]
 
     bins_2 = bins[(bins > 9.85) & (bins < 10.175)]
     count_2 = count[(bins > 9.85) & (bins < 10.175)]
@@ -45,8 +52,8 @@ def main():
     bins_3 = bins[(bins >= 10.175) & (bins < 10.55)]
     count_3 = count[(bins >= 10.175) & (bins < 10.55)]
 
-    bins_back = np.concatenate((bins[(bins <= 9.1) | (bins >= 10.55)], bins[(bins >= 9.7) & (bins <= 9.85)]))
-    count_back= np.concatenate((count[(bins <= 9.1) | (bins >= 10.55)], count[(bins >= 9.7) & (bins <= 9.85)]))
+    bins_back = np.concatenate((bins[(bins <= 9.2) | (bins >= 10.55)], bins[(bins >= 9.7) & (bins <= 9.85)]))
+    count_back= np.concatenate((count[(bins <= 9.2) | (bins >= 10.55)], count[(bins >= 9.7) & (bins <= 9.85)]))
 
     # setting up the peak and background parts of the histogram
 
@@ -80,30 +87,31 @@ def main():
         bins_1, param_back[0], param_back[1])
     
     mu_1 = param_1[1]
-    sig_1 = param_1[2]
+    sig_1 = np.absolute(param_1[2])
 
     count_2_fit = gauss(bins_2, param_2[0], param_2[1], param_2[2]) + decay(
         bins_2, param_back[0], param_back[1])
 
     mu_2 = param_2[1]
-    sig_2 = param_2[2]
+    sig_2 = np.absolute(param_2[2])
     
     count_3_fit = gauss(bins_3, param_3[0], param_3[1], param_3[2]) + decay(
         bins_3, param_back[0], param_back[1])
 
     mu_3 = param_3[1]
-    sig_3 = param_3[2]
+    sig_3 = np.absolute(param_3[2])
 
     peaks = gauss(bins, param_1[0], param_1[1], param_1[2]) + gauss(bins, param_2[0], param_2[1], param_2[2]) + gauss(bins, param_3[0], param_3[1], param_3[2])
 
     count_gauss = peaks + background
     
     
-    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
-    plt.plot (bins, count_gauss, '--', lw = 2, color = 'r')
+    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False, label = 'Raw Data')
+    plt.plot (bins, count_gauss, '--', lw = 2, color = 'r', label = 'Fit')
     plt.ylabel('Count')
     plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
     plt.title('Histogram for Muon Mass Pair (Gaussian)')
+    plt.legend()
     plt.show()
     plt.clf()
     
@@ -158,8 +166,8 @@ def main():
     double_gauss_fit_2 = np.concatenate((tail_fit_2[tail_2 < mu_2], center_fit_2, tail_fit_2[tail_2 > mu_2])) + decay(bins_2, param_back[0], param_back[1])
 
     # peak 3
-    print(sig_3)
-    tail_1st_3, count_tail_1st_3, center_3, count_center_3, tail_2nd_3, count_tail_2nd_3 = peak_split(bins_3, count_3_clean, mu_3, np.absolute(sig_3))
+
+    tail_1st_3, count_tail_1st_3, center_3, count_center_3, tail_2nd_3, count_tail_2nd_3 = peak_split(bins_3, count_3_clean, mu_3, sig_3)
 
 
 
@@ -188,6 +196,7 @@ def main():
     plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
     plt.ylabel('Count')
     plt.title('Histogram of Muon Mass pair (Double Gaussian)')
+    plt.legend()
     plt.show()
     plt.clf()
     
@@ -195,17 +204,19 @@ def main():
 
     # fitting the peaks to crystall ball functions using scipy.curve_fit
     param_crys_1, cryst_cov_1 = curve_fit(crystalball, 
-        bins_1, count_1_clean, p0 = [1.88, 0.9, 9.456127695, 0.043517612], maxfev = 8000)
+        bins_1, count_1_clean, p0 = [1.6, 0.9, mu_1, 0.043517612], maxfev = 80000)
+    
+    print(f"{param_crys_1 = }")
 
     crystal_1 = crystalball(bins, param_crys_1[0], param_crys_1[1], param_crys_1[2], param_crys_1[3])
 
     param_crys_2, cryst_cov_2 = curve_fit(crystalball, 
-        bins_2, count_2_clean, p0 = [1.5, 0.9, 10.0, 0.043517612], maxfev = 8000)
+        bins_2, count_2_clean, p0 = [1.6, 0.9, mu_2, sig_2], maxfev = 80000)
     
     crystal_2 = crystalball(bins, param_crys_2[0], param_crys_2[1], param_crys_2[2], param_crys_2[3])
 
     param_crys_3, cryst_cov_3 = curve_fit(crystalball, 
-        bins_3, count_3_clean, p0 = [1.5, 0.8, 10.35, 0.043517612], maxfev = 8000)
+        bins_3, count_3_clean, p0 = [1.6, 0.8, mu_3, sig_3], maxfev = 80000)
 
     crystal_3 = crystalball(bins, param_crys_3[0], param_crys_3[1], param_crys_3[2], param_crys_3[3])
 
@@ -213,11 +224,12 @@ def main():
     peaks_cb = crystal_1 + crystal_2 + crystal_3
     count_cb = peaks_cb + background
 
-    plt.plot(bins,count_cb)
-    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
+    plt.plot(bins,count_cb, color = 'r', linestyle = '--', label = 'Fit')
+    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False, label = 'Raw Data')
     plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
     plt.ylabel('Count')
     plt.title('Histogram of Muon Mass Pair (Crystal Ball)')
+    plt.legend()
     plt.show()
     plt.clf()
     
@@ -229,12 +241,18 @@ def main():
     # plt.ylabel('Residual')
     # plt.show()
     # plt.clf()
+
     plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
     back_sub = decay(np.array(bins_back), param_back[0], param_back[1])
     plt.scatter(bins_back, back_sub, color = 'r')
-    plt.plot(bins, decay(np.array(bins), param_back[0], param_back[1]), color = 'b')
+    plt.plot(bins, decay(bins, param_back[0], param_back[1]), color = 'b')
+    plt.title('Histogram of the Muon Pair Invariant mass with selected background regions highlighted and fitted')
+    plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
+    plt.ylabel('Count')
+    plt.legend()
     plt.show()
     plt.clf()
+
     print(f"{sum_res_sq_gauss/sum_res_sq_crystal = }")
 
     chi_sq_gauss = chi_sq(count_gauss, count)
