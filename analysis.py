@@ -31,6 +31,7 @@ def main():
     _, n_bins = np.modf((Max-Min)/freedman(xmass_raw))
     
     count , bins_w, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
+    plt.clf()
     bins = bins_w[1:] - (bins_w[1] - bins_w[0])/2
 
     #histogram of the peaks from raw data
@@ -98,10 +99,11 @@ def main():
     count_gauss = peaks + background
     
     
-
+    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
     plt.plot (bins, count_gauss, '--', lw = 2, color = 'r')
-    plt.ylabel('Bin Count')
+    plt.ylabel('Count')
     plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
+    plt.title('Histogram for Muon Mass Pair (Gaussian)')
     plt.show()
     plt.clf()
     
@@ -132,7 +134,14 @@ def main():
 
     double_gauss_fit_1 = np.concatenate((tail_fit_1[tail_1 < mu_1], center_fit_1, tail_fit_1[tail_1 > mu_1])) + decay(bins_1, param_back[0], param_back[1])
 
+    x = np.linspace(mu_1-0.2,mu_1+0.2,1000)
 
+    plt.plot(x, gauss(x, param_tail_1[0], mu_1, param_tail_1[2]), color = 'k', label = 'wide')
+    plt.plot(x, gauss(x, param_center_1[0], mu_1, param_center_1[2]), color = 'r', label = 'narrow')
+    plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
+    plt.ylabel('Count')
+    plt.legend()
+    plt.show()
     # peak 2
     tail_1st_2, count_tail_1st_2, center_2, count_center_2, tail_2nd_2, count_tail_2nd_2 = peak_split(bins_2, count_2_clean, mu_2, sig_2)
 
@@ -174,8 +183,11 @@ def main():
      double_gauss_fit_3,
      back_prime[bins_back >= bins_3[-1]]))
 
-    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
-    plt.plot(bins, count_double_gauss)
+    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False, label = 'Raw Data' )
+    plt.plot(bins, count_double_gauss, color = 'r', linestyle = '--',label = 'Fit')
+    plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
+    plt.ylabel('Count')
+    plt.title('Histogram of Muon Mass pair (Double Gaussian)')
     plt.show()
     plt.clf()
     
@@ -203,9 +215,9 @@ def main():
 
     plt.plot(bins,count_cb)
     plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
-    plt.xlabel('Mass')
+    plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
     plt.ylabel('Count')
-    plt.title('Crystall Ball Fit')
+    plt.title('Histogram of Muon Mass Pair (Crystal Ball)')
     plt.show()
     plt.clf()
     
