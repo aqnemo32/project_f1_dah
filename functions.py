@@ -79,8 +79,6 @@ def crystalball(x, alpha, n, mu, sig):
     return np.array(out)
 
 
-
-
 def decay(x, a, b):
     '''
 
@@ -120,7 +118,7 @@ def chi_sq(fit,data):
     '''
     return np.sum((np.square(data-fit))/fit)
 
-def peak_split(x, y, sig, mu):
+def peak_split(x, y, mu, sig):
     '''
 
     Parameters
@@ -129,10 +127,10 @@ def peak_split(x, y, sig, mu):
         bins.
     y : array
         counts
-    sig : float
-        standard deviation from a single gaussian fit of the data.
     mu : float
         mean from a single gaussian fit of the data.
+    sig : float
+        standard deviation from a single gaussian fit of the data.
 
     Returns
     -------
@@ -149,13 +147,12 @@ def peak_split(x, y, sig, mu):
     tail_1st = x[x < low_lim]
     count_tail_1st = y[x < low_lim]
     
-    tail_2nd = x[x >= up_lim]
-    count_tail_2nd = y[x >= up_lim]
+    tail_2nd = x[x > up_lim]
+    count_tail_2nd = y[x > up_lim]
 
-    center = x[(x >= low_lim) & (x < up_lim)]
-    count_center = y[(x >= low_lim) & (x < up_lim)]
+    center = x[(x >= low_lim) & (x <= up_lim)]
+    count_center = y[(x >= low_lim) & (x <= up_lim)]
     # print(bins_1, count_1)
-    
             
     return tail_1st, count_tail_1st, center, count_center, tail_2nd, count_tail_2nd
         
