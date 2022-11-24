@@ -135,7 +135,43 @@ def crystalball(x, alpha, n, mu, sig):
             
     return np.array(out)
 
+def crystalball_unorm(x, alpha, n, mu, sig):
+    '''
+    
+    Parameters
+    ----------
+    x : numpy array
+        DESCRIPTION.
+    alpha : float
+        DESCRIPTION.
+    n : float
+        DESCRIPTION.
+    mu : float
+        DESCRIPTION.
+    sig : float
+        DESCRIPTION.
 
+    Returns
+    -------
+    numpy array
+        DESCRIPTION.
+    '''
+    a = np.absolute(alpha)
+    A = ((n/a)**n)*np.exp(-((a**2)/2))
+    B = n/a - a
+
+
+    out  = []
+    
+    for i in x:
+    
+        if (i-mu)/sig > -alpha:
+             out.append(np.exp(-np.square(i-mu)/(2*np.square(sig))))
+        
+        else:
+            out.append(A*(B-((i-mu)/sig))**(-n))
+            
+    return np.array(out)
 
 def fix_crystalball(x, mu, sig):
     '''
@@ -164,17 +200,19 @@ def fix_crystalball(x, mu, sig):
     A = ((n/a)**n)*np.exp(-((a**2)/2))
     
     B = n/a - a
-
+    C = n/a * 1/(n-1) * np.exp(-((a**2)/2))
+    D = np.sqrt(pi/2)*(1+erf(a/np.sqrt(2)))
+    N = 1/(sig*(C + D))
 
     out  = []
     
     for i in x:
     
         if (i-mu)/sig > -alpha:
-             out.append(1*np.exp(-np.square(i-mu)/(2*np.square(sig))))
+             out.append(N*np.exp(-np.square(i-mu)/(2*np.square(sig))))
         
         else:
-            out.append(1*A*(B-((i-mu)/sig))**(-n))
+            out.append(N*A*(B-((i-mu)/sig))**(-n))
             
     return np.array(out)
 
