@@ -42,18 +42,26 @@ def main():
     bins = bins_w[1:] - (bins_w[1] - bins_w[0])/2
 
     #histogram of the peaks from raw data
+    bool_1 = (bins > 9.2) & (bins < 9.7)
 
-    bins_1 = bins[(bins > 9.2) & (bins < 9.7)]
-    count_1 = count[(bins > 9.2) & (bins < 9.7)]
+    bins_1 = bins[bool_1]
+    count_1 = count[bool_1]
 
-    bins_2 = bins[(bins > 9.85) & (bins < 10.175)]
-    count_2 = count[(bins > 9.85) & (bins < 10.175)]
+    bool_2 = (bins > 9.85) & (bins < 10.175)
 
-    bins_3 = bins[(bins >= 10.175) & (bins < 10.55)]
-    count_3 = count[(bins >= 10.175) & (bins < 10.55)]
+    bins_2 = bins[bool_2]
+    count_2 = count[bool_2]
 
-    bins_back = np.concatenate((bins[(bins <= 9.2) | (bins >= 10.55)], bins[(bins >= 9.7) & (bins <= 9.85)]))
-    count_back= np.concatenate((count[(bins <= 9.2) | (bins >= 10.55)], count[(bins >= 9.7) & (bins <= 9.85)]))
+    bool_3 = (bins >= 10.175) & (bins < 10.55)
+
+    bins_3 = bins[bool_3]
+    count_3 = count[bool_3]
+
+    bool_back_1 = (bins <= 9.2) | (bins >= 10.55)
+    bool_back_2 = (bins >= 9.7) & (bins <= 9.85)
+
+    bins_back = np.concatenate((bins[bool_back_1], bins[bool_back_2]))
+    count_back = np.concatenate((count[bool_back_1], count[bool_back_2]))
 
     # setting up the peak and background parts of the histogram
 
@@ -76,10 +84,12 @@ def main():
     count_2_clean = count_2 - decay(bins_2, param_back[0], param_back[1])
     count_3_clean = count_3 - decay(bins_3, param_back[0], param_back[1])
     
-    
-    param_1, cov_1 = curve_fit(gauss, bins_1, count_1_clean, p0 = [10, 9.45, 0.03])
-    param_2, cov_2 = curve_fit(gauss, bins_2, count_2_clean, p0 = [10, 10.0, 0.03])
-    param_3, cov_3 = curve_fit(gauss, bins_3, count_3_clean, p0 = [10, 10.27, 0.02])
+    # GAUSSIAN
+    # Fitting the peaks with the background substracted from them
+
+    param_1, cov_1 = curve_fit(gauss, bins_1, count_1_clean, p0 = [100, 9.45, 0.03])
+    param_2, cov_2 = curve_fit(gauss, bins_2, count_2_clean, p0 = [100, 10.0, 0.03])
+    param_3, cov_3 = curve_fit(gauss, bins_3, count_3_clean, p0 = [100, 10.27, 0.02])
     
 
     
@@ -121,7 +131,41 @@ def main():
     sum_res_sq_gauss = np.sum(np.square(res_gauss))
     # res_2 = count_2_fit - count_2
     # res_3 = count_3_fit - count_3
+
+    # GAUSSIAN and DECAY fitted simultaneously
+
+    # fitting the singular peaks as gaussians and decay simultaneously to get estaimates before fitting all three peaks and decay as one
+    bool_1_p = (bins<9.7)
     
+    bool_2_p = (bins >= 9.7) & (bins < 10.175)
+
+    bool_3_p = (bins >= 10.175)
+
+    param_1_d, cov_1_d = curve_fit(
+        gauss_decay, bins[bool_1_p], count[bool_1_p], p0 = [10, 9.45, 0.03, param_back[0], param_back[1]])
+    param_2_d, cov_2_d = curve_fit(
+        gauss_decay, bins[bool_2_p] , count[bool_2_p] , p0 = [8, 10.0, 0.03, param_back[0], param_back[1]])
+    param_3_d, cov_3_d = curve_fit(
+        gauss_decay, bins[bool_3_p], count[bool_3_p], p0 = [400, 10.27, 0.03, param_back[0]*0.9, param_back[1]], maxfev = 20000)
+
+    # fitting all three peaks and the decay as one
+    def func_xtreme(x, a, b, c, d, e, f, g, h, i, j, k):
+        '''
+        combines three gaussians and the background decay into one function where all the parameters are fitted in one go
+        '''
+        return (gauss(x,a,b,c) + gauss(x,d,e,f) + gauss(x,g,h,i) + decay(x,j,k))
+
+    param_f_d, cov_f_d = curve_fit(func_xtreme, bins, count,
+     p0 = [param_1_d[0], param_1_d[1], param_1_d[2], param_2_d[0], param_2_d[1],param_2_d[2], param_3_d[0], param_3_d[1], param_3_d[2],
+       param_1_d[3], param_1_d[4]], maxfev = 10000)
+    print(f"{param_f_d = }")
+    a = param_f_d
+
+    plt.plot(bins, func_xtreme(bins, a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10]), color = 'r', linestyle = '--', lw = 2)
+    plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False, label = 'Raw Data')
+    plt.show()
+    plt.clf()
+
     # DOUBLE GAUSSIAN
     # peak 1
     tail_1st_1, count_tail_1st_1, center_1, count_center_1, tail_2nd_1, count_tail_2nd_1 = peak_split(bins_1, count_1_clean, mu_1, sig_1)

@@ -91,7 +91,7 @@ plt.savefig('/Users/achillequarante/Desktop/dah_graphs_project/2d_hist/mom_tran_
 plt.clf()
 
 plt.hist2d(xmass, np.absolute(mom_tran_2 - mom_tran_1)/(mom_tran_2 + mom_tran_1), bins = 200, range = [[9.2,10.5],[0,1]])
-plt.ylabel(r'$ R = \frac{\lvert p_{t_2} - p_{t_1}\rvert}{p_{t_2} + p_{t_1}} $')
+plt.ylabel(r'$ R = \frac{ \lvert p_{t_2} - p_{t_1} \rvert}{p_{t_2} + p_{t_1}} $')
 plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
 plt.title('2D Histogram of R versus Muon pair mass')
 plt.savefig('/Users/achillequarante/Desktop/dah_graphs_project/2d_hist/xmass_sub_mom_tran_1_2_2d_hist', format = 'png')

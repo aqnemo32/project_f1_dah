@@ -37,6 +37,63 @@ def gauss(x, a, mu, sig):
     '''
     return a*np.exp(-np.square(x-mu)/(2*np.square(sig)))
 
+
+def double_gauss(x, a, mu, sig_1, sig_2, f):
+    '''
+    
+    Parameters
+    ----------
+    x : numpy array
+        histogram bins.
+    a : float
+        defines the amplitude of the gaussian fit.
+    mu : float
+        mean of the distribution, defines the x coordinate of the the gaussian fit maxima.
+    sig_1 : float
+        standard deviation of the distribution, defines the width of the first gaussian fit.
+    sig_2 : float
+        standard deviation of the distribution, defines the width of the second gaussian fit.
+    f : float
+        XXXX.
+
+
+    Returns
+    -------
+    numpy array
+        double gaussian fit for the given bins, defines the y coordinate on the histogram.
+
+    '''
+    return a*(f*np.exp(-np.square(x-mu)/(2*np.square(sig_1))) + (f-1)*np.exp(-np.square(x-mu)/(2*np.square(sig_2))))
+
+
+
+def gauss_decay(x, a, mu, sig, A, b):
+    '''
+    
+    Parameters
+    ----------
+    x : numpy array
+        histogram bins.
+    a : float
+        defines the amplitude of the gaussian fit.
+    mu : float
+        mean of the distribution, defines the x coordinate of the the gaussian fit maxima.
+    sig : float
+        standard deviation of the distribution, defines the width of the gaussian fit.
+    A : float
+        amplitude of the exponential decay.
+    b : float
+        defines the speed of the decay (bigger b steeper curve)
+
+
+    Returns
+    -------
+    numpy array
+        gaussian fit for the given bins, defines the y coordinate on a graph.
+
+    '''
+    return a*np.exp(-np.square(x-mu)/(2*np.square(sig))) + A*np.exp(x*b)
+
 def crystalball(x, alpha, n, mu, sig):
     '''
     
