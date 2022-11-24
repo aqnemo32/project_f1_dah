@@ -63,7 +63,7 @@ def double_gauss(x, a, mu, sig_1, sig_2, f):
         double gaussian fit for the given bins, defines the y coordinate on the histogram.
 
     '''
-    return a*(f*np.exp(-np.square(x-mu)/(2*np.square(sig_1))) + (f-1)*np.exp(-np.square(x-mu)/(2*np.square(sig_2))))
+    return a*(np.absolute(f)*np.exp(-np.square(x-mu)/(2*np.square(sig_1))) + (1-np.absolute(f))*np.exp(-np.square(x-mu)/(2*np.square(sig_2))))
 
 
 
@@ -132,6 +132,49 @@ def crystalball(x, alpha, n, mu, sig):
         
         else:
             out.append(N*A*(B-((i-mu)/sig))**(-n))
+            
+    return np.array(out)
+
+
+
+def fix_crystalball(x, mu, sig):
+    '''
+    
+    Parameters
+    ----------
+    x : numpy array
+        DESCRIPTION.
+    alpha : float
+        DESCRIPTION.
+    n : float
+        DESCRIPTION.
+    mu : float
+        DESCRIPTION.
+    sig : float
+        DESCRIPTION.
+
+    Returns
+    -------
+    numpy array
+        DESCRIPTION.
+    '''
+    alpha = 1.82421036
+    n = 0.95880339
+    a = np.absolute(alpha)
+    A = ((n/a)**n)*np.exp(-((a**2)/2))
+    
+    B = n/a - a
+
+
+    out  = []
+    
+    for i in x:
+    
+        if (i-mu)/sig > -alpha:
+             out.append(1*np.exp(-np.square(i-mu)/(2*np.square(sig))))
+        
+        else:
+            out.append(1*A*(B-((i-mu)/sig))**(-n))
             
     return np.array(out)
 

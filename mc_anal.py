@@ -25,6 +25,7 @@ def main():
     count , bins, patches = plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'bar', range =(Min, Max), density = False )
     plt.show()
     plt.clf()
+    print(bins[1] - bins[0])
     bins = bins[1:] - (bins[1]-bins[0])/2
 
     
@@ -40,30 +41,7 @@ def main():
     std_1 = param_1[1]
     print(f"{mean_1=}\n{std_1=}")
     gauss_fit = gauss(bins_1, param_1[0], param_1[1], param_1[2]) 
-    
-    chi_sq_gauss = chi_sq(gauss_fit, count_1)
 
-    tail_1st, count_tail_1st, center, count_center, tail_2nd, count_tail_2nd = peak_split(bins_1, count_1, mean_1, std_1)
-
-    tail = np.concatenate((tail_1st, tail_2nd))
-    count_tail = np.concatenate((count_tail_1st, count_tail_2nd))
-    
-    param_tail, cov_t = curve_fit(gauss, tail, count_tail, p0 = [5, 9.45, 0.04], maxfev = 1600)
-    param_center, cov_c = curve_fit(gauss, center, count_center, p0= [10, 9.45, 0.01])
-    
-    
-    tail_fit = gauss(tail, param_tail[0], param_tail[1], param_tail[2])
-    center_fit = gauss(center, param_center[0], param_center[1], param_center[2])
-
-    double_gauss_fit = np.concatenate((tail_fit[:len(tail_1st)], center_fit, tail_fit[len(tail_1st):]))
-    chi_sq_d_gauss = chi_sq(double_gauss_fit, count_1)
-    
-    plt.plot(bins_1, double_gauss_fit)
-    plt.scatter(bins_1, count_1, marker = 'x', color = 'k')
-    plt.title('Double Gauss Fit')
-    plt.show()
-    plt.clf()
-    print(f'{chi_sq_gauss=}\n{chi_sq_d_gauss=}')
     
     
     
