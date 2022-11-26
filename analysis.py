@@ -125,6 +125,8 @@ def main():
        param_back[0], param_back[1]], maxfev = 10000)
     a = param_f_s
 
+    print(a)
+
     gauss_fit = func_xtreme(bins, a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10])
 
     
