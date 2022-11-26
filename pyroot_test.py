@@ -28,15 +28,15 @@ hist_mc.GetXaxis().SetTitle("m_{ll} [GeV/c^{2}]")
 hist_mc.Draw("pe")
 
 
-gauss_fit = ROOT.TF1(" gaussfit ", "gaus" ,9.0 ,11.0 )
+gauss_fit = ROOT.TF1(" gaussfit ", "gaus" ,9.0 ,10.0 )
 
 hist_mc.Fit(gauss_fit, 'E')
 
 canvas.Print ( 'xmass_mc_hist.pdf')
 
 
-chi2 = gauss_fit.GetChisquare()
-ndof = gauss_fit.GetNDF()
+chi2_gauss = gauss_fit.GetChisquare()
+ndof_gauss = gauss_fit.GetNDF()
 
 mean = gauss_fit.GetParameter(1)
 sig = gauss_fit.GetParameter(0)
@@ -59,5 +59,13 @@ hist_mc_prime.Draw("pe")
 
 hist_mc_prime.Fit(f_cb, 'E') #worked up till here
 
+
+
+
 canvas.Print ('xmass_mc_hist_cb.pdf')
+
+chi2_cb = f_cb.GetChisquare()
+ndof_cb = f_cb.GetNDF()
+
+print(f"{chi2_gauss/ndof_gauss = }\n{chi2_cb/ndof_cb = }")
 
