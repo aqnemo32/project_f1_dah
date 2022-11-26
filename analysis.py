@@ -159,6 +159,7 @@ def main():
 
     def func_x_xtreme(x, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q):
         '''
+        Sum of three double gaussiand and expoentitla decay to create one big PDF
         '''
         return double_gauss(x, a,b,c,d,e) + double_gauss(x, f,g,h,i,j) + double_gauss(x, k,l,m,n,o) + decay(x, p,q)
 
@@ -170,7 +171,10 @@ def main():
 
     b = param_f_d
 
-    print(f"{b = }")
+    print(f"{b = }\n{cov_f_d.diagonal() = }")
+
+    error_d_gauss_param = np.sqrt(cov_f_d.diagonal())/n_bins
+    print(error_d_gauss_param)
 
     double_gauss_fit = func_x_xtreme(bins,
      b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10] ,b[11] ,b[12] ,b[13], b[14], b[15], b[16])
@@ -233,14 +237,6 @@ def main():
     plt.show()
     plt.clf()
     
-    res_crystal = crystal_ball_fit - count
-    sum_res_sq_crystal = np.sum(np.square(res_crystal))
-    # plt.scatter(bins_1,res_1, marker = 'x', lw = 0.8, color = 'k')
-    # plt.title('Residual plot for peak 1')
-    # plt.xlabel('Mass')
-    # plt.ylabel('Residual')
-    # plt.show()
-    # plt.clf()
 
     plt.hist(xmass, color = 'k', bins = int(n_bins), histtype= 'step', range =(Min, Max), density=False )
     back_sub = decay(np.array(bins_back), param_back[0], param_back[1])
@@ -258,15 +254,16 @@ def main():
     chi_sq_d_gauss = chi_sq(double_gauss_fit, count)
     chi_sq_cb = chi_sq(crystal_ball_fit, count)
 
-    print(f"{chi_sq_gauss = :.5}\n{chi_sq_d_gauss = :.5}\n{chi_sq_cb = :.5}")
+    res_squared_double_gauss = np.square(count - double_gauss_fit)
 
-    param_crys_1_fix, cryst_cov_1_fix = curve_fit(fix_crystalball, 
-        bins_2, count_2_clean, p0 = [mu_2, 0.043517612], maxfev = 80000)
-
-    plt.plot(bins_2, fix_crystalball(bins_2, param_crys_1_fix[0], param_crys_1_fix[1]))
-    plt.scatter(bins_2, count_2_clean)
+    plt.scatter(bins, np.log10(res_squared_double_gauss), marker = 'x', color = 'k')
+    plt.xlabel(r'Muon Pair Mass [GeV/c$^2$]')
+    plt.ylabel('Squared Residual')
+    plt.title('Squared Residuals versus Muon Pair Mass')
     plt.show()
     plt.clf()
+
+    print(f"{chi_sq_gauss = :.5}\n{chi_sq_d_gauss = :.5}\n{chi_sq_cb = :.5}")
 
 
 a = datetime.datetime.now()    
