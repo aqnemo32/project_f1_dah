@@ -1,5 +1,6 @@
 import ROOT
 import numpy as np
+from functions import freedman
 import matplotlib.pyplot as plt
 
 # Analysis of the MC data
@@ -8,6 +9,8 @@ xmass_mc = np.load('mc_anal/xmass_mc.npy')
 count, bins, patches = plt.hist(xmass_mc, bins = 400)
 plt.clf()
 bins = bins[1:] - (bins[1] - bins[0])/2
+
+n_bins = (np.max(xmass_mc) - np.min(xmass_mc))/freedman(xmass_mc)
 
 hist_mc = ROOT.TH1F('xmass_mc ','Number of Events versus Muon Pair Invariant Mass ' ,500 ,bins[0], bins[-1])
 hist_mc.Sumw2
@@ -26,7 +29,7 @@ hist_mc.SetStats(0)
 hist_mc.SetLineColor( ROOT.kBlue )
 hist_mc.SetLineWidth(2)
 hist_mc.GetYaxis().SetTitle(" Number of events ")
-hist_mc.GetXaxis().SetTitle("m_{ll} [GeV/c^{2}]")
+hist_mc.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_mc.Draw("pe")
 
 
@@ -34,7 +37,7 @@ gauss_fit_mc = ROOT.TF1(" gaussfit ", "gaus" ,9.0 ,10.0 )
 
 hist_mc.Fit(gauss_fit_mc, 'E')
 
-canvas.Print ( 'xmass_mc_hist.pdf')
+canvas.Print ( 'xmass_mc_hist.png')
 
 
 chi2_gauss = gauss_fit_mc.GetChisquare()
@@ -56,7 +59,7 @@ hist_mc_prime.SetStats(0)
 hist_mc_prime.SetLineColor( ROOT.kBlue )
 hist_mc_prime.SetLineWidth(2)
 hist_mc_prime.GetYaxis().SetTitle(" Number of events ")
-hist_mc_prime.GetXaxis().SetTitle("m_{ll} [GeV/c^{2}]")
+hist_mc_prime.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_mc_prime.Draw("pe")
 
 hist_mc_prime.Fit(f_cb, 'E') #worked up till here
@@ -70,7 +73,7 @@ print(x)
 alpha_cb = x[3]
 n_cb = x[4]
 
-canvas.Print ('xmass_mc_hist_cb.pdf')
+canvas.Print ('xmass_mc_hist_cb.png')
 
 chi2_cb = f_cb.GetChisquare()
 ndof_cb = f_cb.GetNDF()
@@ -79,9 +82,9 @@ print(f"{chi2_gauss/ndof_gauss = }\n{chi2_cb/ndof_cb = }")
 
 # Analysis of the Upsilon data
 
-xmass_dirty = np.load('ups_anal/xmass.npy')
-tran_1_ups = np.load('ups_anal/mom_tran_1.npy')
-tran_2_ups = np.load('ups_anal/mom_tran_2.npy')
+xmass_dirty = np.load('ups_big_anal/xmass_big.npy')
+tran_1_ups = np.load('ups_big_anal/mom_tran_1_big.npy')
+tran_2_ups = np.load('ups_big_anal/mom_tran_2_big.npy')
 
 
 #Cleaning the data using the trnasverse momenta of both particles
@@ -89,7 +92,9 @@ R = np.absolute(tran_2_ups - tran_1_ups)/(tran_2_ups + tran_1_ups)
 
 xmass = xmass_dirty[R<0.42]
 
-hist_ups = ROOT.TH1F('xmass ','Number of Events versus Muon Pair Invariant Mass ' ,422 ,bins[0], bins[-1])
+n_bins = (np.max(xmass) - np.min(xmass))/freedman(xmass)
+
+hist_ups = ROOT.TH1F('xmass ','Number of Events versus Muon Pair Invariant Mass ' ,int(n_bins) ,bins[0], bins[-1])
 hist_ups.Sumw2
 
 for i in xmass:
@@ -101,16 +106,13 @@ hist_ups.SetStats(0)
 hist_ups.SetLineColor( ROOT.kBlue )
 hist_ups.SetLineWidth(2)
 hist_ups.GetYaxis().SetTitle(" Number of events ")
-hist_ups.GetXaxis().SetTitle("m_{\mu^{+} \mu^{-}} [GeV/c^{2}]")
+hist_ups.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
-canvas.Print ('xmass_hist.pdf')
+canvas.Print ('xmass_hist.png')
 
 # Create gaussian pdf to fit to the Upsilon data
 
-# g_1 = "exp(0.5*((x-[0])/[1])**2)"
-# g_2 = "exp(0.5*((x-[2])/[3])**2)"
-# g_3 = "exp(0.5*((x-[4])/[5])**2)"
 g_1 = "gaus(0)" #0,1,2
 g_2 = "gaus(3)" #3,4,5
 g_3 = "gaus(6)" #6,7,8
@@ -145,7 +147,7 @@ gauss_fit.SetLineColor(ROOT.kBlack)
 gauss_fit.SetLineWidth(2)
 gauss_fit.Draw()
 
-canvas.Print('test_gauss_pdf.pdf')
+canvas.Print('test_gauss_pdf.png')
 
 hist_ups.SetDirectory(0)
 
@@ -153,10 +155,16 @@ hist_ups.SetStats(0)
 hist_ups.SetLineColor( ROOT.kBlue )
 hist_ups.SetLineWidth(2)
 hist_ups.GetYaxis().SetTitle(" Number of events ")
-hist_ups.GetXaxis().SetTitle("m_{\mu^{+} \mu^{-}} [GeV/c^{2}]")
+hist_ups.GetXaxis().SetTitle("m(#mu^{+} #mu^{-}) [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
 hist_ups.Fit(gauss_fit, 'E')
+
+legend = ROOT.TLegend(0.7, 0.6, 0.85, 0.75)
+legend.AddEntry(hist_ups, "Data")
+legend.AddEntry(gauss_fit, "Gaussian Fit")
+legend.SetLineWidth(0)
+legend.Draw("same")
 
 
 a = []
@@ -166,7 +174,7 @@ for i in range(12):
 
 
 
-canvas.Print ('xmass_hist_gauss.pdf')
+canvas.Print ('xmass_hist_gauss.png')
 
 
 # Create a double gaussian pdf to fit the Upsilon data
@@ -174,10 +182,10 @@ canvas.Print ('xmass_hist_gauss.pdf')
 # For Double Gauss parameters in order are:
 #       A, mu, sigma * 2 + b (Normalisaton between both gaussians)
 
-d_g_1 = "[5]*[0]*exp(-0.5*((x-[1])/[2])^2) + (1-[5])*[3]*exp(-0.5*((x-[1])/[4])^2)" # 0,1,2 - 3,1,4 - 5
-d_g_2 = "[11]*[6]*exp(-0.5*((x-[7])/[8])^2) + (1-[11])*[9]*exp(-0.5*((x-[7])/[10])^2)" # 6,7,8 - 9,7,10 - 11
-d_g_3 = "[17]*[12]*exp(-0.5*((x-[13])/[14])^2) + (1-[17])*[12]*exp(-0.5*((x-[13])/[16])^2)" # 12,13,14 - 15,13,16 - 17
-decay_dg = "[20]*expo(18)" # 18,19 - 20
+d_g_1 = "[0]*([4]*exp(-0.5*((x-[1])/[2])^2) + (1-[4])*exp(-0.5*((x-[1])/[3])^2))" # 0 - 1,2 - 1,3 - 4
+d_g_2 = "[5]*([9]*exp(-0.5*((x-[6])/[7])^2) + (1-[9])*exp(-0.5*((x-[7])/[8])^2))" # 5 - 6,7 - 7,8 - 9
+d_g_3 = "[10]*([14]*exp(-0.5*((x-[11])/[12])^2) + (1-[14])*exp(-0.5*((x-[11])/[13])^2))" # 10 - 11,12 - 12,13 - 14
+decay_dg = "[17]*expo(15)" # 18,19 - 20
 
 pdf_d_gauss = "((%s) + (%s) + (%s) + (%s))"%(d_g_1, d_g_2, d_g_3, decay_dg)
 
@@ -185,40 +193,57 @@ d_gauss_fit = ROOT.TF1("Double Gaussian Fit", pdf_d_gauss, bins[0], bins[-1])
 
 
 # Peak 1
-d_gauss_fit.SetParameter(0, 3500)
-d_gauss_fit.SetParameter(1, 9.45)
-d_gauss_fit.SetParameter(2, 0.01)
-d_gauss_fit.SetParameter(3, 3000)
-d_gauss_fit.SetParameter(4, 0.06)
-d_gauss_fit.SetParameter(5, 0.5)
+d_gauss_fit.SetParameter(0, 4.09667e+04)
+d_gauss_fit.SetParName(0, "1 A 1")
+d_gauss_fit.SetParameter(1, 9.45579)
+d_gauss_fit.SetParName(1, "1 mu")
+d_gauss_fit.SetParameter(2, 4.07224e-02)
+d_gauss_fit.SetParName(2, "1 sig 1")
+d_gauss_fit.SetParameter(3, 1.04659e-01)
+d_gauss_fit.SetParName(3, "1 sig 2")
+d_gauss_fit.SetParameter(4, 9.50803e-01)
+d_gauss_fit.SetParLimits(4, 0, 1)
+d_gauss_fit.SetParName(4, "1 b")
 
 # Peak 2
-d_gauss_fit.SetParameter(6, 800)
-d_gauss_fit.SetParameter(7, 10.01)
-d_gauss_fit.SetParameter(8, 0.01)
-d_gauss_fit.SetParameter(9, 800)
-d_gauss_fit.SetParameter(10, 0.05)
-d_gauss_fit.SetParameter(11, 0.6)
+d_gauss_fit.SetParameter(5, 1.20934e+04)
+d_gauss_fit.SetParName(5, "2 A 1")
+d_gauss_fit.SetParameter(6, 1.00188e+01)
+d_gauss_fit.SetParName(6, "2 mu")
+d_gauss_fit.SetParameter(7, 4.60835e-02)
+d_gauss_fit.SetParName(7, "2 sig 1")
+d_gauss_fit.SetParameter(8, 1.10135e+01)
+d_gauss_fit.SetParName(8, "2 sig 2")
+d_gauss_fit.SetParameter(9, 7.47857e-01)
+d_gauss_fit.SetParLimits(9, 0, 1)
+d_gauss_fit.SetParName(9, "2 b")
 
 # Peak 3
-d_gauss_fit.SetParameter(12, 350)
-d_gauss_fit.SetParameter(13, 10.35)
-d_gauss_fit.SetParameter(14, 0.01)
-d_gauss_fit.SetParameter(15, 350)
-d_gauss_fit.SetParameter(16, 0.05)
-d_gauss_fit.SetParameter(17, 0.6)
+d_gauss_fit.SetParameter(10, 4.32570e+03)
+d_gauss_fit.SetParName(10, "3 A 1")
+d_gauss_fit.SetParameter(11, 1.03499e+01)
+d_gauss_fit.SetParName(11, "3 mu 1")
+d_gauss_fit.SetParameter(12, 4.79953e-02)
+d_gauss_fit.SetParName(12, "3 sig 1")
+d_gauss_fit.SetParameter(13, 4.29587e+01)
+d_gauss_fit.SetParName(13, "3 sig 2")
+d_gauss_fit.SetParameter(14, 0.5)
+d_gauss_fit.SetParLimits(14, 0, 1)
+d_gauss_fit.SetParName(14, "3 b")
+
+
 
 # Decay
-d_gauss_fit.SetParameter(18, 6)
-d_gauss_fit.SetParameter(19, -0.6)
-d_gauss_fit.SetParameter(20, 1000)
+d_gauss_fit.SetParameter(15, 8.55484)
+d_gauss_fit.SetParameter(16, -0.654703)
+d_gauss_fit.SetParameter(17, 1.39381e+03)
 
 
 d_gauss_fit.SetLineColor(ROOT.kBlack)
 d_gauss_fit.SetLineWidth(2)
 d_gauss_fit.Draw()
 
-canvas.Print('test_d_gauss_pdf.pdf')
+canvas.Print('test_d_gauss_pdf.png')
 
 hist_ups.SetDirectory(0)
 
@@ -226,15 +251,18 @@ hist_ups.SetStats(0)
 hist_ups.SetLineColor( ROOT.kBlue )
 hist_ups.SetLineWidth(2)
 hist_ups.GetYaxis().SetTitle(" Number of events ")
-hist_ups.GetXaxis().SetTitle("m_{\mu^{+} \mu^{-}} [GeV/c^{2}]")
+hist_ups.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
 hist_ups.Fit(d_gauss_fit, 'E')
 
+legend = ROOT.TLegend(0.7, 0.6, 0.85, 0.75)
+legend.AddEntry(hist_ups, "Data")
+legend.AddEntry(d_gauss_fit, "Double Gaussian Fit")
+legend.SetLineWidth(0)
+legend.Draw("same")
 
-
-canvas.Print ('xmass_hist_d_gauss.pdf')
-
+canvas.Print ('xmass_hist_d_gauss.png')
 
 # Create a Crystal Ball pdf to fit the Upsilon data
 
@@ -256,7 +284,7 @@ cb_fit = ROOT.TF1("Crystal Ball PDF", pdf_cb, bins[0], bins[-1])
 
 #Crystal Ball 1
 cb_fit.SetParameter(0,3600)
-cb_fit.SetParName(0,"N 1")
+cb_fit.SetParName(0,"A 1")
 cb_fit.SetParameter(1,9.45)
 cb_fit.SetParName(1,"mu 1")
 cb_fit.SetParameter(2,0.03)
@@ -271,7 +299,7 @@ cb_fit.FixParameter(4, n_cb)
 
 #Crystal Ball 2
 cb_fit.SetParameter(5,700)
-cb_fit.SetParName(5,"N 2")
+cb_fit.SetParName(5,"A 2")
 cb_fit.SetParameter(6,10.0)
 cb_fit.SetParName(6,"mu 2")
 cb_fit.SetParameter(7,0.03)
@@ -286,7 +314,7 @@ cb_fit.FixParameter(9, n_cb)
 
 #Crystal Ball 3
 cb_fit.SetParameter(10,300)
-cb_fit.SetParName(10,"N 3")
+cb_fit.SetParName(10,"A 3")
 cb_fit.SetParameter(11,10.35)
 cb_fit.SetParName(11,"mu 3")
 cb_fit.SetParameter(12,0.01)
@@ -308,7 +336,7 @@ cb_fit.SetLineColor(ROOT.kBlack)
 cb_fit.SetLineWidth(2)
 cb_fit.Draw()
 
-canvas.Print('test_cb_pdf.pdf')
+canvas.Print('test_cb_pdf.png')
 
 hist_ups.SetDirectory(0)
 
@@ -316,11 +344,15 @@ hist_ups.SetStats(0)
 hist_ups.SetLineColor( ROOT.kBlue )
 hist_ups.SetLineWidth(2)
 hist_ups.GetYaxis().SetTitle(" Number of events ")
-hist_ups.GetXaxis().SetTitle("m_{\mu^{+} \mu^{-}} [GeV/c^{2}]")
+hist_ups.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
 hist_ups.Fit(cb_fit, 'E')
 
+legend = ROOT.TLegend(0.7, 0.6, 0.85, 0.75)
+legend.AddEntry(hist_ups, "Data")
+legend.AddEntry(cb_fit, "Crystal Ball Fit")
+legend.SetLineWidth(0)
+legend.Draw("same")
 
-
-canvas.Print ('xmass_hist_cb.pdf')
+canvas.Print ('xmass_hist_cb.png')
