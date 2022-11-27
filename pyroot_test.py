@@ -158,7 +158,7 @@ hist_ups.GetYaxis().SetTitle(" Number of events ")
 hist_ups.GetXaxis().SetTitle("m(#mu^{+} #mu^{-}) [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
-hist_ups.Fit(gauss_fit, 'E')
+hist_ups.Fit(gauss_fit, 'L')
 
 legend = ROOT.TLegend(0.7, 0.6, 0.85, 0.75)
 legend.AddEntry(hist_ups, "Data")
@@ -167,9 +167,6 @@ legend.SetLineWidth(0)
 legend.Draw("same")
 
 
-a = []
-for i in range(12):
-    a.append(gauss_fit.GetParameter(i))
 
 
 
@@ -254,7 +251,7 @@ hist_ups.GetYaxis().SetTitle(" Number of events ")
 hist_ups.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
-hist_ups.Fit(d_gauss_fit, 'E')
+hist_ups.Fit(d_gauss_fit, 'L')
 
 legend = ROOT.TLegend(0.7, 0.6, 0.85, 0.75)
 legend.AddEntry(hist_ups, "Data")
@@ -347,7 +344,7 @@ hist_ups.GetYaxis().SetTitle(" Number of events ")
 hist_ups.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
-hist_ups.Fit(cb_fit, 'E')
+hist_ups.Fit(cb_fit, 'L')
 
 legend = ROOT.TLegend(0.7, 0.6, 0.85, 0.75)
 legend.AddEntry(hist_ups, "Data")
@@ -356,3 +353,15 @@ legend.SetLineWidth(0)
 legend.Draw("same")
 
 canvas.Print ('xmass_hist_cb.png')
+
+chi2_gauss = gauss_fit.GetChisquare()
+gauss_ndof = gauss_fit.GetNDF()
+
+
+chi2_d_gauss = d_gauss_fit.GetChisquare()
+d_gauss_ndof = d_gauss_fit.GetNDF()
+
+chi2_cb = cb_fit.GetChisquare()
+cb_ndof = cb_fit.GetNDF()
+
+print(f"{chi2_gauss/gauss_ndof = }\n{chi2_d_gauss/d_gauss_ndof = }\n{chi2_cb/cb_ndof = }")
