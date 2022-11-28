@@ -37,7 +37,7 @@ gauss_fit_mc = ROOT.TF1(" gaussfit ", "gaus" ,9.0 ,10.0 )
 
 hist_mc.Fit(gauss_fit_mc, 'E')
 
-canvas.Print ( 'xmass_mc_hist.png')
+canvas.Print ( 'plots/xmass_mc_gauss_hist.png')
 
 
 chi2_gauss = gauss_fit_mc.GetChisquare()
@@ -68,12 +68,14 @@ x= []
 for i  in range(5):
     x.append(f_cb.GetParameter(i))
 
+canvas.Print ( 'plots/xmass_mc_hist.png')
+
 print(x)
 
 alpha_cb = x[3]
 n_cb = x[4]
 
-canvas.Print ('xmass_mc_hist_cb.png')
+canvas.Print ('plots/xmass_mc_hist_cb.png')
 
 chi2_cb = f_cb.GetChisquare()
 ndof_cb = f_cb.GetNDF()
@@ -109,7 +111,7 @@ hist_ups.GetYaxis().SetTitle(" Number of events ")
 hist_ups.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
 hist_ups.Draw("pe")
 
-canvas.Print ('xmass_hist.png')
+canvas.Print ('plots/xmass_hist.png')
 
 # Create gaussian pdf to fit to the Upsilon data
 
@@ -147,7 +149,7 @@ gauss_fit.SetLineColor(ROOT.kBlack)
 gauss_fit.SetLineWidth(2)
 gauss_fit.Draw()
 
-canvas.Print('test_gauss_pdf.png')
+canvas.Print('plots/test_gauss_pdf.png')
 
 hist_ups.SetDirectory(0)
 
@@ -180,7 +182,7 @@ res_gauss.GetLowerRefGraph().SetMaximum(15)
 res_gauss.SetSeparationMargin(0.0)
 
 
-canvas.Print ('xmass_hist_gauss.png')
+canvas.Print ('plots/xmass_hist_gauss.png')
 
 
 
@@ -250,7 +252,7 @@ d_gauss_fit.SetLineColor(ROOT.kBlack)
 d_gauss_fit.SetLineWidth(2)
 d_gauss_fit.Draw()
 
-canvas.Print('test_d_gauss_pdf.png')
+canvas.Print('plots/test_d_gauss_pdf.png')
 
 hist_ups.SetDirectory(0)
 
@@ -280,7 +282,7 @@ res_d_gauss.GetLowerRefGraph().SetMinimum(-7)
 res_d_gauss.GetLowerRefGraph().SetMaximum(7)
 res_d_gauss.SetSeparationMargin(0.0)
 
-canvas.Print ('xmass_hist_d_gauss.png')
+canvas.Print ('plots/xmass_hist_d_gauss.png')
 
 # Create a Crystal Ball pdf to fit the Upsilon data
 
@@ -354,7 +356,7 @@ cb_fit.SetLineColor(ROOT.kBlack)
 cb_fit.SetLineWidth(2)
 cb_fit.Draw()
 
-canvas.Print('test_cb_pdf.png')
+canvas.Print('plots/test_cb_pdf.png')
 
 
 hist_ups.SetDirectory(0)
@@ -385,7 +387,7 @@ res_cb.GetLowerRefGraph().SetMaximum(7)
 res_cb.SetSeparationMargin(0.0)
 
 
-canvas.Print ('xmass_hist_cb.png')
+canvas.Print ('plots/xmass_hist_cb.png')
 
 chi2_gauss = gauss_fit.GetChisquare()
 gauss_ndof = gauss_fit.GetNDF()
@@ -420,6 +422,8 @@ print(f"{test_cb.Integral(9.0, 9.65) = }")
 
 bool_back_1 = (xmass <= 9.2) | (xmass >= 10.55)
 bool_back_2 = (xmass >= 9.7) & (xmass <= 9.85)
+
+#Backgroung fit error calculation
 
 xmass_back = np.concatenate((xmass[bool_back_1], xmass[bool_back_2]))
 
