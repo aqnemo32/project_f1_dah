@@ -167,7 +167,20 @@ legend.SetLineWidth(0)
 legend.Draw("same")
 
 
+
+
+res_gauss = ROOT.TRatioPlot(hist_ups)
+res_gauss.Draw()
+
+res_gauss.GetLowerRefYaxis().SetTitle("Ratio");
+res_gauss.GetUpperRefYaxis().SetTitle("Number of Counts")
+res_gauss.SetConfidenceIntervalColors(ROOT.kBlue, ROOT.kWhite)
+res_gauss.GetLowerRefGraph().SetMinimum(-15)
+res_gauss.GetLowerRefGraph().SetMaximum(15)
+
+
 canvas.Print ('xmass_hist_gauss.png')
+
 
 
 # Create a double gaussian pdf to fit the Upsilon data
@@ -255,6 +268,17 @@ legend.AddEntry(d_gauss_fit, "Double Gaussian Fit")
 legend.SetLineWidth(0)
 legend.Draw("same")
 
+
+res_d_gauss = ROOT.TRatioPlot(hist_ups)
+res_d_gauss.Draw()
+
+res_d_gauss.GetLowerRefYaxis().SetTitle("Ratio");
+res_d_gauss.GetUpperRefYaxis().SetTitle("Number of Counts")
+res_d_gauss.SetConfidenceIntervalColors(ROOT.kBlue, ROOT.kWhite)
+res_d_gauss.GetLowerRefGraph().SetMinimum(-7)
+res_d_gauss.GetLowerRefGraph().SetMaximum(7)
+res_d_gauss.SetSeparationMargin(0.0)
+
 canvas.Print ('xmass_hist_d_gauss.png')
 
 # Create a Crystal Ball pdf to fit the Upsilon data
@@ -276,11 +300,11 @@ cb_fit = ROOT.TF1("Crystal Ball PDF", pdf_cb, bins[0], bins[-1])
 #     n = n of Crystal Ball
 
 #Crystal Ball 1
-cb_fit.SetParameter(0,3600)
+cb_fit.SetParameter(0,36000)
 cb_fit.SetParName(0,"A 1")
 cb_fit.SetParameter(1,9.45)
 cb_fit.SetParName(1,"mu 1")
-cb_fit.SetParameter(2,0.03)
+cb_fit.SetParameter(2,0.04)
 cb_fit.SetParName(2,"sig 1")
 
 cb_fit.SetParameter(3,alpha_cb) #alpha_cb
@@ -291,11 +315,11 @@ cb_fit.SetParName(4,"n 1")
 cb_fit.FixParameter(4, n_cb)
 
 #Crystal Ball 2
-cb_fit.SetParameter(5,700)
+cb_fit.SetParameter(5,7000)
 cb_fit.SetParName(5,"A 2")
 cb_fit.SetParameter(6,10.0)
 cb_fit.SetParName(6,"mu 2")
-cb_fit.SetParameter(7,0.03)
+cb_fit.SetParameter(7,0.04)
 cb_fit.SetParName(7,"sig 2")
 
 cb_fit.SetParameter(8,alpha_cb)
@@ -306,11 +330,11 @@ cb_fit.SetParName(9,"n 2")
 cb_fit.FixParameter(9, n_cb)
 
 #Crystal Ball 3
-cb_fit.SetParameter(10,300)
+cb_fit.SetParameter(10,3000)
 cb_fit.SetParName(10,"A 3")
 cb_fit.SetParameter(11,10.35)
 cb_fit.SetParName(11,"mu 3")
-cb_fit.SetParameter(12,0.01)
+cb_fit.SetParameter(12,0.04)
 cb_fit.SetParName(12,"sig 3")
 
 cb_fit.SetParameter(13,alpha_cb)
@@ -339,7 +363,7 @@ hist_ups.SetLineColor( ROOT.kBlue )
 hist_ups.SetLineWidth(2)
 hist_ups.GetYaxis().SetTitle(" Number of events ")
 hist_ups.GetXaxis().SetTitle("Muon Pair Mass [GeV/c^{2}]")
-hist_ups.Draw("pe")
+hist_ups.Draw("h")
 
 hist_ups.Fit(cb_fit, 'L')
 
@@ -348,6 +372,23 @@ legend.AddEntry(hist_ups, "Data")
 legend.AddEntry(cb_fit, "Crystal Ball Fit")
 legend.SetLineWidth(0)
 legend.Draw("same")
+
+res_cb = ROOT.TRatioPlot(hist_ups)
+res_cb.Draw("pe")
+
+res_cb.GetLowerRefYaxis().SetTitle("Ratio");
+res_cb.GetUpperRefYaxis().SetTitle("Number of Counts")
+res_cb.SetConfidenceIntervalColors(ROOT.kBlue, ROOT.kWhite)
+res_cb.GetLowerRefGraph().SetMinimum(-7)
+res_cb.GetLowerRefGraph().SetMaximum(7)
+res_cb.SetSeparationMargin(0.0)
+
+latex = ROOT.TLatex ()
+latex.SetNDC ()
+latex.SetTextSize (0.06)
+latex.DrawText (0.7 ,0.83 , " HASCO 2018 ")
+latex.SetTextSize (0.04)
+latex.DrawText (0.7 ,0.77 , "Di - muon events ")
 
 canvas.Print ('xmass_hist_cb.png')
 
@@ -364,9 +405,9 @@ cb_ndof = cb_fit.GetNDF()
 print(d_gauss_ndof, cb_ndof)
 print(f"{chi2_gauss/gauss_ndof = }\n{chi2_d_gauss/d_gauss_ndof = }\n{chi2_cb/cb_ndof = }")
 
+
+
 # Finding the areas under the first peaks for the double gaussian and crystal ball for the error estimation
-
-
 
 
 test_d_gauss = ROOT.TF1("test func", d_g_1, 7.5, 10.0)
@@ -408,5 +449,6 @@ hist_back.Fit(lin_func, "L")
 print(f"{exp_func.Integral(bins[0], bins[-1]) = }")
 print(f"{lin_func.Integral(bins[0], bins[-1]) = }")
 
-print(f"diference {1 - lin_func.Integral(bins[0], bins[-1])/exp_func.Integral(bins[0], bins[-1]})")
+
+
 
