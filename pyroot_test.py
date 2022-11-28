@@ -167,10 +167,6 @@ legend.SetLineWidth(0)
 legend.Draw("same")
 
 
-
-
-
-
 canvas.Print ('xmass_hist_gauss.png')
 
 
@@ -182,7 +178,7 @@ canvas.Print ('xmass_hist_gauss.png')
 d_g_1 = "[0]*([4]*exp(-0.5*((x-[1])/[2])^2) + (1-[4])*exp(-0.5*((x-[1])/[3])^2))" # 0 - 1,2 - 1,3 - 4
 d_g_2 = "[5]*([9]*exp(-0.5*((x-[6])/[7])^2) + (1-[9])*exp(-0.5*((x-[7])/[8])^2))" # 5 - 6,7 - 7,8 - 9
 d_g_3 = "[10]*([14]*exp(-0.5*((x-[11])/[12])^2) + (1-[14])*exp(-0.5*((x-[11])/[13])^2))" # 10 - 11,12 - 12,13 - 14
-decay_dg = "[17]*expo(15)" # 18,19 - 20
+decay_dg = "[17]*expo(15)" # 15,16 - 27
 
 pdf_d_gauss = "((%s) + (%s) + (%s) + (%s))"%(d_g_1, d_g_2, d_g_3, decay_dg)
 
@@ -273,7 +269,7 @@ pdf_cb = "((%s) + (%s) + (%s) + (%s))"%(cb_1, cb_2, cb_3, decay_cb)
 cb_fit = ROOT.TF1("Crystal Ball PDF", pdf_cb, bins[0], bins[-1])
 
 # Parameter Naming Converntion:
-#     N = Normalisation
+#     A = Normalisation or Amplitude
 #     mu = mean
 #     sig = standard deviation
 #     alpha = Alpha of Crystal Ball
@@ -287,10 +283,10 @@ cb_fit.SetParName(1,"mu 1")
 cb_fit.SetParameter(2,0.03)
 cb_fit.SetParName(2,"sig 1")
 
-cb_fit.SetParameter(3,alpha_cb)
+cb_fit.SetParameter(3,alpha_cb) #alpha_cb
 cb_fit.SetParName(3,"alpha 1")
 cb_fit.FixParameter(3, alpha_cb)
-cb_fit.SetParameter(4,n_cb)
+cb_fit.SetParameter(4,n_cb) # 
 cb_fit.SetParName(4,"n 1")
 cb_fit.FixParameter(4, n_cb)
 
@@ -327,13 +323,14 @@ cb_fit.FixParameter(14, n_cb)
 #Decay
 cb_fit.SetParameter(15,5.93248e+00)
 cb_fit.SetParameter(16,-0.586445)
-cb_fit.SetParameter(17,938.068)
+cb_fit.SetParameter(17,938)
 
 cb_fit.SetLineColor(ROOT.kBlack)
 cb_fit.SetLineWidth(2)
 cb_fit.Draw()
 
 canvas.Print('test_cb_pdf.png')
+
 
 hist_ups.SetDirectory(0)
 
@@ -364,4 +361,52 @@ d_gauss_ndof = d_gauss_fit.GetNDF()
 chi2_cb = cb_fit.GetChisquare()
 cb_ndof = cb_fit.GetNDF()
 
+print(d_gauss_ndof, cb_ndof)
 print(f"{chi2_gauss/gauss_ndof = }\n{chi2_d_gauss/d_gauss_ndof = }\n{chi2_cb/cb_ndof = }")
+
+# Finding the areas under the first peaks for the double gaussian and crystal ball for the error estimation
+
+
+
+
+test_d_gauss = ROOT.TF1("test func", d_g_1, 7.5, 10.0)
+
+test_d_gauss.SetParameters(41903.095173652015, 9.455921313503952, 0.03598768850967427, 0.06785006410165306, 0.7728296909250849)
+
+print(f"{test_d_gauss.Integral(9.0, 9.65) = }")
+
+
+
+test_cb = ROOT.TF1("test func", cb_1, 7.5, 10.0)
+test_cb.SetParameters(40981.299213096754,9.456199461119844,0.04286138281195304,1.809797775245278,1.2147346008187958)
+
+print(f"{test_cb.Integral(9.0, 9.65) = }")
+
+bool_back_1 = (xmass <= 9.2) | (xmass >= 10.55)
+bool_back_2 = (xmass >= 9.7) & (xmass <= 9.85)
+
+xmass_back = np.concatenate((xmass[bool_back_1], xmass[bool_back_2]))
+
+hist_back = ROOT.TH1F('xmass_back','Number of Events versus Muon Pair Invariant Mass Background' ,int(n_bins) ,bins[0], bins[-1])
+hist_back.Sumw2
+
+for i in xmass_back:
+    hist_back.Fill(i)
+
+
+exp_fit = "expo(0)*[2]"
+lin_fit = "[0] * x + [1]"
+
+exp_func = ROOT.TF1("exp func", exp_fit, bins[0], bins[-1])
+exp_func.SetParameters(3.0, -0.5, 20000)
+
+lin_func = ROOT.TF1("lin func", lin_fit, bins[0], bins[-1])
+
+hist_back.Fit(exp_func, "L")
+hist_back.Fit(lin_func, "L")
+
+print(f"{exp_func.Integral(bins[0], bins[-1]) = }")
+print(f"{lin_func.Integral(bins[0], bins[-1]) = }")
+
+print(f"diference {1 - lin_func.Integral(bins[0], bins[-1])/exp_func.Integral(bins[0], bins[-1]})")
+
