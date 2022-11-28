@@ -177,6 +177,7 @@ res_gauss.GetUpperRefYaxis().SetTitle("Number of Counts")
 res_gauss.SetConfidenceIntervalColors(ROOT.kBlue, ROOT.kWhite)
 res_gauss.GetLowerRefGraph().SetMinimum(-15)
 res_gauss.GetLowerRefGraph().SetMaximum(15)
+res_gauss.SetSeparationMargin(0.0)
 
 
 canvas.Print ('xmass_hist_gauss.png')
@@ -383,12 +384,6 @@ res_cb.GetLowerRefGraph().SetMinimum(-7)
 res_cb.GetLowerRefGraph().SetMaximum(7)
 res_cb.SetSeparationMargin(0.0)
 
-latex = ROOT.TLatex ()
-latex.SetNDC ()
-latex.SetTextSize (0.06)
-latex.DrawText (0.7 ,0.83 , " HASCO 2018 ")
-latex.SetTextSize (0.04)
-latex.DrawText (0.7 ,0.77 , "Di - muon events ")
 
 canvas.Print ('xmass_hist_cb.png')
 
