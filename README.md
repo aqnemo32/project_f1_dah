@@ -4,7 +4,7 @@ Project F1 for the Data Acquisition course
 
 IMPORTANT FILES
 
-The Python script that does all the fitting and contains all the results is the pyroot_test.py (Requires ROOT, numpy and matplotlib.pyplot)
+The Python script that does all the fitting and contains all the results is the pyroot_test.py (Requires ROOT, numpy, matplotlib.pyplot and freedman from funtions)
 
 The work through for cleaning the data using transverse momenta is in data_cleaning.ipynb (Requires numpy and matplotlib.pyplot)
 
