@@ -10,9 +10,11 @@ The work through for cleaning the data using transverse momenta is in data_clean
 
 all histograms not made in pyroot are produced and contained within histogram_2d_ups.py and histograms.py
 
-file_handle.py should not be necessary as all numpy arrays are saved in folders wthin the repo. To check if it works you are expected to have access to one of .bin files provided in the DAH dropbox or a file of a similar format.
+file_handle.py should not be necessary as all numpy arrays are saved in folders wthin the repo. To check if it works you are expected to have access to one of `.bin` files provided in the DAH dropbox or a file of a similar format.
 
-Mass     Pair Transverse Momentum     Rapidity      Momentum Pair    Muon 1 Transverse Momentum     Muon 2 Transverse Momentum
+The format of the `.bin` files
+
+Mass, Pair Transverse Momentum, Rapidity, Momentum Pair, Muon 1 Transverse Momentum, Muon 2 Transverse Momentum
 
 LESS IMPORTANT
 
