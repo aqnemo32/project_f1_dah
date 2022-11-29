@@ -8,7 +8,7 @@ The Python script that does all the fitting and contains all the results is the 
 
 The work through for cleaning the data using transverse momenta is in data_cleaning.ipynb (Requires `numpy` and `matplotlib.pyplot`)
 
-all histograms not made in pyroot are produced and contained within histogram_2d_ups.py and histograms.py (require `numpy` and `matplotli,pyplot`)
+all histograms not made in pyroot are produced and contained within histogram_2d_ups.py and histograms.py (require `numpy` and `matplotlib.pyplot`)
 
 `file_handle.py` should not be necessary as all numpy arrays are saved in folders wthin the repository. To check if it works you are expected to have access to one of `.bin` files provided in the DAH dropbox or a file of a similar format.
 
