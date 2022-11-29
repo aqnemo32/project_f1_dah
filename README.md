@@ -18,4 +18,4 @@ Mass, Pair Transverse Momentum, Rapidity, Momentum Pair, Muon 1 Transverse Momen
 
 LESS IMPORTANT
 
-The file named functions has all the functions used for the iminuit_test.ipynb, analysis.py and iminuit_probfit_test
+The files iminuit_test.ipynb, iminuit_probfit_test.ipynb are not relevant to the results of the project (they are just test files where I worked on learning and appluing iminuit and iminuit alongside probfit
